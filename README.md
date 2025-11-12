@@ -1,8 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 50 Year Mortgage Calculator
+
+A free, user-friendly web application for calculating 50-year mortgages based on Trump's proposed 50-year fixed-rate mortgage program. This tool helps homebuyers compare monthly payments and total costs between 50-year and traditional 30-year mortgages.
+
+## Features
+
+- **Free 50 Year Mortgage Calculator**: Calculate monthly payments and total interest costs
+- **Comparison Tools**: Compare 50-year mortgages with traditional 15, 20, and 30-year terms
+- **Detailed Analysis**: View amortization schedules and payment breakdowns
+- **Interactive UI**: Real-time calculations with instant results
+- **Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices
+- **SEO Optimized**: Built for better search visibility and user engagement
+- **Analytics Integration**: Google Analytics and Microsoft Clarity tracking
+
+## Technology Stack
+
+- **Frontend**: Next.js 16.0.1, React 19.2.0, TypeScript 5
+- **Styling**: Tailwind CSS 4, PostCSS 4
+- **Deployment**: Optimized for Vercel
+- **Analytics**: Google Analytics 4, Microsoft Clarity
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+ or higher
+- npm, yarn, pnpm, or bun
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd 50yearmortgagecalculator.net
+```
+
+2. Install dependencies:
+```bash
+npm install
+# or
+yarn install
+```
+
+### Development
+
+Run the development server:
 
 ```bash
 npm run dev
@@ -14,23 +55,120 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to view the application in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The application auto-reloads as you edit `app/page.tsx` and other files.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Build for Production
+
+```bash
+npm run build
+npm start
+```
+
+### Code Quality
+
+```bash
+npm run lint
+```
+
+## Project Structure
+
+```
+├── app/
+│   ├── page.tsx              # Home page
+│   ├── layout.tsx            # Root layout with metadata and analytics
+│   ├── globals.css           # Global styles
+│   ├── components/
+│   │   ├── MortgageCalculator.tsx
+│   │   ├── ComparisonTool.tsx
+│   │   ├── Header.tsx
+│   │   ├── Footer.tsx
+│   │   └── StructuredData.tsx
+│   ├── about/
+│   ├── faq/
+│   ├── privacy/
+│   ├── terms/
+│   ├── contact/
+│   └── comparison/
+├── public/
+│   └── robots.txt
+├── package.json
+├── tsconfig.json
+├── tailwind.config.ts
+└── next.config.ts
+```
+
+## Key Pages
+
+- **Home** (`/`) - Main mortgage calculator and overview
+- **Comparison** (`/comparison`) - Compare different mortgage terms
+- **FAQ** (`/faq`) - Frequently asked questions about 50-year mortgages
+- **About** (`/about`) - Information about the calculator and Trump's proposal
+- **Contact** (`/contact`) - Contact information
+- **Privacy** (`/privacy`) - Privacy policy
+- **Terms** (`/terms`) - Terms of service
+
+## Analytics & Tracking
+
+The application includes:
+
+- **Google Analytics**: Track user behavior, page views, and interactions (ID: G-8CXZF294Q6)
+- **Microsoft Clarity**: Session recording and heatmap analytics (ID: u52rhdz7ls)
+
+Both tracking scripts are configured to load after page interaction to minimize performance impact.
+
+## SEO
+
+The project is optimized for search engines with:
+
+- Semantic HTML structure
+- Meta tags for Open Graph and Twitter
+- Structured data (JSON-LD) for schema markup
+- XML sitemap and robots.txt
+- Responsive design for mobile-first indexing
+
+## Performance Optimizations
+
+- Image optimization via Next.js Image component
+- Font optimization with next/font
+- CSS optimization with Tailwind CSS
+- Script optimization with Next.js Script component
+
+## Browser Support
+
+- Chrome/Edge 90+
+- Firefox 88+
+- Safari 14+
+- Mobile browsers (iOS Safari, Chrome Android)
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is open source and available under the MIT License.
 
 ## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
+- [React Documentation](https://react.dev)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Support
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+For issues, questions, or feedback, please visit the repository or contact the development team.
 
-## Deploy on Vercel
+## Deployment
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+This application is optimized for deployment on [Vercel](https://vercel.com), which is the recommended platform for Next.js applications.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+To deploy:
+
+1. Push your code to a Git repository (GitHub, GitLab, or Bitbucket)
+2. Connect your repository to Vercel
+3. Vercel will automatically detect Next.js and configure the build settings
+4. Your site will be deployed and updated on every push
+
+See [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

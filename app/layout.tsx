@@ -14,8 +14,8 @@ export const metadata: Metadata = {
     default: "50 Year Mortgage Calculator - Trump Proposal Calculator",
     template: "%s | 50 Year Mortgage Calculator"
   },
-  description: "Free 50 year mortgage calculator for Trump's proposed 50-year fixed-rate mortgage program. Compare monthly payments, calculate total interest costs, and analyze amortization schedules.",
-  keywords: ["50 year mortgage calculator", "trump 50 year mortgage", "50 year mortgage", "mortgage calculator", "50 year fixed rate mortgage", "long term mortgage calculator", "trump mortgage proposal"],
+  description: "Free 50 year mortgage calculator. Compare monthly payments and total interest costs for Trump's proposed 50-year fixed-rate mortgage program.",
+  keywords: ["50 year mortgage calculator", "50 year mortgage", "trump mortgage", "mortgage calculator", "fixed rate mortgage"],
   authors: [{ name: "50 Year Mortgage Calculator" }],
   creator: "50 Year Mortgage Calculator",
   publisher: "50 Year Mortgage Calculator",
@@ -65,7 +65,7 @@ export default function RootLayout({
 
         {/* Google Analytics */}
         <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"
+          src="https://www.googletagmanager.com/gtag/js?id=G-8CXZF294Q6"
           strategy="afterInteractive"
         />
         <Script id="google-analytics" strategy="afterInteractive">
@@ -73,7 +73,7 @@ export default function RootLayout({
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', 'G-XXXXXXXXXX');
+            gtag('config', 'G-8CXZF294Q6');
           `}
         </Script>
 
@@ -84,7 +84,7 @@ export default function RootLayout({
               c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
               t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
               y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-            })(window, document, "clarity", "script", "YOUR_CLARITY_ID");
+            })(window, document, "clarity", "script", "u52rhdz7ls");
           `}
         </Script>
       </body>
