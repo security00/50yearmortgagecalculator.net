@@ -158,7 +158,7 @@ export default function ComparisonTool() {
       )}
 
       {/* Comparison Table */}
-      <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
+      <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100 mb-8">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50">
@@ -167,69 +167,91 @@ export default function ComparisonTool() {
                 <th className="text-right py-4 px-6 font-bold text-gray-900">Monthly Payment</th>
                 <th className="text-right py-4 px-6 font-bold text-gray-900">Total Interest</th>
                 <th className="text-right py-4 px-6 font-bold text-gray-900">Total Payment</th>
+                <th className="text-right py-4 px-6 font-bold text-gray-900">vs 30-Year</th>
               </tr>
             </thead>
             <tbody>
-              {results.map((result, index) => (
-                <tr
-                  key={result.term}
-                  className={`border-t border-gray-100 ${
-                    result.term === 30 || result.term === 50 ? 'bg-blue-50' : 'hover:bg-gray-50'
-                  }`}
-                >
-                  <td className="py-4 px-6">
-                    <div className="flex items-center gap-2">
-                      <span className="text-lg font-bold text-gray-900">{result.term} Years</span>
-                      {result.term === 30 && (
-                        <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded">
-                          Traditional
-                        </span>
-                      )}
-                      {result.term === 50 && (
-                        <span className="px-2 py-1 bg-purple-100 text-purple-700 text-xs font-semibold rounded">
-                          Trump Proposal
-                        </span>
-                      )}
-                    </div>
-                  </td>
-                  <td className="py-4 px-6 text-right">
-                    <div className="text-lg font-bold text-gray-900">{formatCurrency(result.monthlyPayment)}</div>
-                    {index > 0 && (
-                      <div className="text-xs text-gray-500">
-                        {result.monthlyPayment < results[index - 1].monthlyPayment ? (
-                          <span className="text-green-600">
-                            ↓ {formatCurrency(results[index - 1].monthlyPayment - result.monthlyPayment)} less
+              {results.map((result, index) => {
+                const result30Data = results.find((r) => r.term === 30);
+                const monthlySavings = result30Data ? result30Data.monthlyPayment - result.monthlyPayment : 0;
+                const interestDiff = result30Data ? result.totalInterest - result30Data.totalInterest : 0;
+
+                return (
+                  <tr
+                    key={result.term}
+                    className={`border-t border-gray-100 ${
+                      result.term === 30 || result.term === 50 ? 'bg-blue-50' : 'hover:bg-gray-50'
+                    }`}
+                  >
+                    <td className="py-4 px-6">
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg font-bold text-gray-900">{result.term} Years</span>
+                        {result.term === 30 && (
+                          <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded">
+                            Standard
                           </span>
-                        ) : (
-                          <span className="text-red-600">
-                            ↑ {formatCurrency(result.monthlyPayment - results[index - 1].monthlyPayment)} more
+                        )}
+                        {result.term === 50 && (
+                          <span className="px-2 py-1 bg-purple-100 text-purple-700 text-xs font-semibold rounded">
+                            Proposal
                           </span>
                         )}
                       </div>
-                    )}
-                  </td>
-                  <td className="py-4 px-6 text-right">
-                    <div className="text-lg font-bold text-gray-900">{formatCurrency(result.totalInterest)}</div>
-                    {index > 0 && (
-                      <div className="text-xs text-red-600">
-                        ↑ {formatCurrency(result.totalInterest - results[index - 1].totalInterest)} more
-                      </div>
-                    )}
-                  </td>
-                  <td className="py-4 px-6 text-right">
-                    <div className="text-lg font-bold text-gray-900">{formatCurrency(result.totalPayment)}</div>
-                  </td>
-                </tr>
-              ))}
+                    </td>
+                    <td className="py-4 px-6 text-right">
+                      <div className="text-lg font-bold text-gray-900">{formatCurrency(result.monthlyPayment)}</div>
+                      {index > 0 && (
+                        <div className="text-xs text-gray-500">
+                          {result.monthlyPayment < results[index - 1].monthlyPayment ? (
+                            <span className="text-green-600">
+                              ↓ {formatCurrency(results[index - 1].monthlyPayment - result.monthlyPayment)}
+                            </span>
+                          ) : (
+                            <span className="text-red-600">
+                              ↑ {formatCurrency(result.monthlyPayment - results[index - 1].monthlyPayment)}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </td>
+                    <td className="py-4 px-6 text-right">
+                      <div className="text-lg font-bold text-gray-900">{formatCurrency(result.totalInterest)}</div>
+                      {index > 0 && (
+                        <div className="text-xs text-red-600">
+                          ↑ {formatCurrency(result.totalInterest - results[index - 1].totalInterest)}
+                        </div>
+                      )}
+                    </td>
+                    <td className="py-4 px-6 text-right">
+                      <div className="text-lg font-bold text-gray-900">{formatCurrency(result.totalPayment)}</div>
+                    </td>
+                    <td className="py-4 px-6 text-right">
+                      {result.term !== 30 ? (
+                        <div>
+                          <div className={`text-sm font-bold ${monthlySavings > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                            {monthlySavings > 0 ? '-' : '+'}{formatCurrency(Math.abs(monthlySavings))}/mo
+                          </div>
+                          <div className={`text-xs ${interestDiff > 0 ? 'text-red-600' : 'text-green-600'}`}>
+                            {interestDiff > 0 ? '+' : '-'}{formatCurrency(Math.abs(interestDiff))}
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="text-sm text-gray-500">—</div>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
       </div>
 
-      {/* Visual Comparison */}
-      {results.length > 0 && (
-        <div className="mt-8 bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
-          <h3 className="text-xl font-bold text-gray-900 mb-6">Monthly Payment Comparison</h3>
+      {/* Detailed Insights Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        {/* Monthly Payment Visualization */}
+        <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+          <h3 className="text-xl font-bold text-gray-900 mb-6">Monthly Payment by Term</h3>
           <div className="space-y-4">
             {results.map((result) => {
               const maxPayment = Math.max(...results.map((r) => r.monthlyPayment));
@@ -238,17 +260,21 @@ export default function ComparisonTool() {
               return (
                 <div key={result.term}>
                   <div className="flex justify-between mb-2">
-                    <span className="font-semibold text-gray-700">{result.term} Years</span>
+                    <span className="font-semibold text-gray-700">{result.term}-Year</span>
                     <span className="font-bold text-gray-900">{formatCurrency(result.monthlyPayment)}</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-8 overflow-hidden">
                     <div
                       className={`h-full flex items-center justify-end pr-3 text-white text-sm font-semibold ${
-                        result.term === 30
-                          ? 'bg-blue-500'
-                          : result.term === 50
-                          ? 'bg-purple-500'
-                          : 'bg-gray-400'
+                        result.term === 15
+                          ? 'bg-green-500'
+                          : result.term === 20
+                          ? 'bg-blue-400'
+                          : result.term === 30
+                          ? 'bg-blue-600'
+                          : result.term === 40
+                          ? 'bg-purple-400'
+                          : 'bg-purple-600'
                       }`}
                       style={{ width: `${percentage}%` }}
                     >
@@ -259,6 +285,92 @@ export default function ComparisonTool() {
               );
             })}
           </div>
+        </div>
+
+        {/* Total Interest Visualization */}
+        <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+          <h3 className="text-xl font-bold text-gray-900 mb-6">Total Interest Cost by Term</h3>
+          <div className="space-y-4">
+            {results.map((result) => {
+              const maxInterest = Math.max(...results.map((r) => r.totalInterest));
+              const percentage = (result.totalInterest / maxInterest) * 100;
+
+              return (
+                <div key={result.term}>
+                  <div className="flex justify-between mb-2">
+                    <span className="font-semibold text-gray-700">{result.term}-Year</span>
+                    <span className="font-bold text-gray-900">{formatCurrency(result.totalInterest)}</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-8 overflow-hidden">
+                    <div
+                      className={`h-full flex items-center justify-end pr-3 text-white text-sm font-semibold ${
+                        result.term === 15
+                          ? 'bg-green-500'
+                          : result.term === 20
+                          ? 'bg-blue-400'
+                          : result.term === 30
+                          ? 'bg-blue-600'
+                          : result.term === 40
+                          ? 'bg-orange-400'
+                          : 'bg-red-600'
+                      }`}
+                      style={{ width: `${percentage}%` }}
+                    >
+                      {percentage.toFixed(0)}%
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* Recommendation Section */}
+      {result30 && (
+        <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-8 border-2 border-blue-200">
+          <h3 className="text-2xl font-bold text-gray-900 mb-4">Finding Your Ideal Loan Term</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            {results.map((result) => {
+              let recommendation = '';
+              let icon = '';
+              let bgColor = '';
+
+              if (result.term === 15) {
+                recommendation = 'Best for paying off quickly';
+                icon = '⚡';
+                bgColor = 'bg-green-100';
+              } else if (result.term === 20) {
+                recommendation = 'Balanced approach';
+                icon = '⚖️';
+                bgColor = 'bg-blue-100';
+              } else if (result.term === 30) {
+                recommendation = 'Most popular option';
+                icon = '🏠';
+                bgColor = 'bg-blue-100';
+              } else if (result.term === 40) {
+                recommendation = 'Lower monthly cost';
+                icon = '💰';
+                bgColor = 'bg-purple-100';
+              } else {
+                recommendation = 'Minimum monthly payment';
+                icon = '📉';
+                bgColor = 'bg-purple-100';
+              }
+
+              return (
+                <div key={result.term} className={`rounded-xl p-4 ${bgColor}`}>
+                  <div className="text-3xl mb-2">{icon}</div>
+                  <div className="text-sm font-bold text-gray-900 mb-1">{result.term}-Year</div>
+                  <div className="text-xs text-gray-700">{recommendation}</div>
+                  <div className="text-sm font-bold text-gray-900 mt-2">{formatCurrency(result.monthlyPayment)}/mo</div>
+                </div>
+              );
+            })}
+          </div>
+          <p className="text-sm text-gray-600 mt-4">
+            Choose based on your monthly budget, financial goals, and how quickly you want to build equity. Shorter terms mean higher monthly payments but significantly less total interest paid.
+          </p>
         </div>
       )}
     </div>
