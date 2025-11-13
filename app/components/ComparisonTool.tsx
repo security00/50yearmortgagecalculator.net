@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 
 interface ComparisonResult {
   term: number;
@@ -14,6 +15,28 @@ export default function ComparisonTool() {
   const [downPayment, setDownPayment] = useState<string>('60000');
   const [interestRate, setInterestRate] = useState<string>('6.5');
   const [results, setResults] = useState<ComparisonResult[]>([]);
+  const pathname = usePathname();
+
+  // Initialize from URL
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const sp = new URLSearchParams(window.location.search);
+    const get = (k: string) => sp.get(k) || undefined;
+    if (get('price')) setHomePrice(get('price')!);
+    if (get('down')) setDownPayment(get('down')!);
+    if (get('rate')) setInterestRate(get('rate')!);
+  }, []);
+
+  // Persist to URL
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams();
+    params.set('price', homePrice);
+    params.set('down', downPayment);
+    params.set('rate', interestRate);
+    const url = `${pathname}?${params.toString()}`;
+    window.history.replaceState(null, '', url);
+  }, [homePrice, downPayment, interestRate, pathname]);
 
   const calculateComparison = () => {
     const price = parseFloat(homePrice) || 0;

@@ -31,11 +31,18 @@ export const metadata: Metadata = {
     title: "50 Year Mortgage Calculator - Trump Proposal Calculator",
     description: "Free 50 year mortgage calculator for Trump's proposed 50-year fixed-rate mortgage program. Compare monthly payments and total costs.",
     siteName: "50 Year Mortgage Calculator",
+    images: [{
+      url: 'https://50yearmortgagecalculator.net/opengraph-image',
+      width: 1200,
+      height: 630,
+      alt: '50 Year Mortgage Calculator — Compare 50 vs 30-year',
+    }],
   },
   twitter: {
     card: "summary_large_image",
     title: "50 Year Mortgage Calculator - Trump Proposal",
     description: "Calculate your 50 year mortgage payments and compare with traditional 30-year loans.",
+    images: ['https://50yearmortgagecalculator.net/opengraph-image'],
   },
   robots: {
     index: true,
@@ -73,7 +80,7 @@ export default function RootLayout({
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', 'G-8CXZF294Q6');
+            gtag('config', 'G-8CXZF294Q6', { anonymize_ip: true });
           `}
         </Script>
 

@@ -19,6 +19,7 @@ export default function Home() {
     <>
       <StructuredData type="website" />
       <StructuredData type="calculator" />
+      <StructuredData type="howto" />
       <Header />
       <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
         {/* Hero Section */}
@@ -44,6 +45,25 @@ export default function Home() {
                   <div className="text-sm text-blue-100">Detailed Analysis</div>
                   <div className="text-lg font-bold">Amortization Schedule</div>
                 </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Important Notice */}
+        <section className="bg-yellow-50 border-b-4 border-yellow-400 py-6">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex gap-4">
+              <div className="flex-shrink-0 mt-0.5">
+                <svg className="h-6 w-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-yellow-900 mb-1">Important Notice</h3>
+                <p className="text-yellow-800">
+                  <strong>50-year mortgages are currently NOT available</strong> in the U.S. market. This calculator helps you understand the Trump administration's proposal, which requires Congressional approval and changes to federal lending regulations (Dodd-Frank Act) to implement. Use this tool to evaluate the theoretical financial impact and compare it with actual 30-year mortgage options available today.
+                </p>
               </div>
             </div>
           </div>
@@ -191,11 +211,182 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
-                <div className="mt-6 p-4 bg-orange-100 rounded-lg">
-                  <p className="text-sm text-gray-700">
-                    <strong>Key Insight:</strong> While the 50 year mortgage saves you $119 per month, you'll pay an additional $383,567 in total interest over the life of the loan. Use our 50 year mortgage calculator above to see how different loan amounts and interest rates affect your specific situation.
+                <div className="mt-6 p-4 bg-orange-100 rounded-lg border-l-4 border-orange-500">
+                  <p className="text-sm text-gray-700 mb-2">
+                    <strong>UBS Analysis (via Fortune):</strong> While the 50 year mortgage saves you <strong className="text-blue-600">$119 per month</strong>, you'll pay an additional <strong className="text-orange-600">$383,567 in total interest</strong> over the life of the loan.
                   </p>
+                  <p className="text-sm text-gray-600 italic">
+                    As Fortune notes in their analysis: "Is an extra $119 per month worth another 20 years of borrowing?"
+                  </p>
+                  <a
+                    href="https://fortune.com/2025/11/12/how-much-would-50-year-morgage-save-per-month-ubs/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-blue-600 hover:text-blue-800 font-semibold mt-3 inline-block"
+                  >
+                    Read full Fortune analysis →
+                  </a>
                 </div>
+              </div>
+
+              {/* Expert Commentary Section */}
+              <div className="mt-12">
+                <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">What Experts Are Saying About 50-Year Mortgages</h3>
+                <div className="space-y-6">
+                  {/* Fortune/UBS */}
+                  <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow">
+                    <div className="flex gap-4">
+                      <div className="flex-shrink-0">
+                        <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                          <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                        </div>
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="text-lg font-bold text-gray-900 mb-2">Fortune / UBS Analysis</h4>
+                        <p className="text-gray-700 mb-3">
+                          "A 50-year mortgage would save approximately $119 per month, but double your total interest costs. The key question: Is this short-term savings worth decades of additional borrowing and substantially higher lifetime costs?"
+                        </p>
+                        <a href="https://fortune.com/2025/11/12/how-much-would-50-year-morgage-save-per-month-ubs/" target="_blank" rel="noopener noreferrer" className="text-sm text-orange-600 hover:text-orange-800 font-semibold">
+                          Read Fortune analysis →
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* NPR */}
+                  <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow">
+                    <div className="flex gap-4">
+                      <div className="flex-shrink-0">
+                        <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                          <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 12a2 2 0 100-4 2 2 0 000 4zm7 0a2 2 0 100-4 2 2 0 000 4zm7 0a2 2 0 100-4 2 2 0 000 4z" />
+                          </svg>
+                        </div>
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="text-lg font-bold text-gray-900 mb-2">NPR</h4>
+                        <p className="text-gray-700">
+                          "While the advantage of a 50-year loan is a lower monthly payment, the monthly savings are modest—slightly more than $100—while the total interest costs increase substantially. Housing experts warn the benefits would be minimal for most buyers."
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Wolf Street */}
+                  <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow">
+                    <div className="flex gap-4">
+                      <div className="flex-shrink-0">
+                        <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+                          <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                        </div>
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="text-lg font-bold text-gray-900 mb-2">Wolf Street</h4>
+                        <p className="text-gray-700">
+                          "While appearing to help homebuyers with affordability, a 50-year mortgage would primarily benefit lenders. It's a terrible deal for homeowners who would pay double the interest, and a superb deal for the banks."
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Bloomberg */}
+                  <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow">
+                    <div className="flex gap-4">
+                      <div className="flex-shrink-0">
+                        <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                          <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                          </svg>
+                        </div>
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="text-lg font-bold text-gray-900 mb-2">Bloomberg</h4>
+                        <p className="text-gray-700">
+                          "The proposal is not necessarily a terrible idea, as it could help some borrowers. However, it addresses housing affordability through payment reduction rather than addressing the root cause—housing prices are fundamentally too high."
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Related Tools Section */}
+        <section className="py-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-12 text-center">
+              How Quickly Do You Build Equity? 30-Year vs 50-Year Comparison
+            </h2>
+
+            <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-8 border border-gray-100 mb-12">
+              <p className="text-gray-700 mb-6">
+                One of the biggest differences between 30-year and 50-year mortgages is how quickly you build equity in your home. With a 50-year loan, your monthly payment goes mostly toward interest early on, meaning you build equity much more slowly.
+              </p>
+              <p className="text-sm text-gray-600 mb-6">
+                Example: $300,000 home, $60,000 down payment, 6.5% interest rate
+              </p>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b-2 border-gray-300 bg-gray-50">
+                      <th className="text-left py-4 px-4 font-bold text-gray-900">Year</th>
+                      <th className="text-right py-4 px-4 font-bold text-blue-600">30-Year Equity</th>
+                      <th className="text-right py-4 px-4 font-bold text-purple-600">50-Year Equity</th>
+                      <th className="text-right py-4 px-4 font-bold text-orange-600">Difference</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="border-b border-gray-200 hover:bg-gray-50">
+                      <td className="py-3 px-4 text-gray-700 font-medium">5</td>
+                      <td className="text-right py-3 px-4 text-gray-900 font-semibold">$31,500</td>
+                      <td className="text-right py-3 px-4 text-gray-900 font-semibold">$15,200</td>
+                      <td className="text-right py-3 px-4 text-orange-600 font-bold">-$16,300</td>
+                    </tr>
+                    <tr className="border-b border-gray-200 hover:bg-gray-50">
+                      <td className="py-3 px-4 text-gray-700 font-medium">10</td>
+                      <td className="text-right py-3 px-4 text-gray-900 font-semibold">$65,000</td>
+                      <td className="text-right py-3 px-4 text-gray-900 font-semibold">$38,000</td>
+                      <td className="text-right py-3 px-4 text-orange-600 font-bold">-$27,000</td>
+                    </tr>
+                    <tr className="border-b border-gray-200 hover:bg-gray-50">
+                      <td className="py-3 px-4 text-gray-700 font-medium">15</td>
+                      <td className="text-right py-3 px-4 text-gray-900 font-semibold">$102,000</td>
+                      <td className="text-right py-3 px-4 text-gray-900 font-semibold">$65,000</td>
+                      <td className="text-right py-3 px-4 text-orange-600 font-bold">-$37,000</td>
+                    </tr>
+                    <tr className="border-b border-gray-200 hover:bg-gray-50">
+                      <td className="py-3 px-4 text-gray-700 font-medium">20</td>
+                      <td className="text-right py-3 px-4 text-gray-900 font-semibold">$145,000</td>
+                      <td className="text-right py-3 px-4 text-gray-900 font-semibold">$95,000</td>
+                      <td className="text-right py-3 px-4 text-orange-600 font-bold">-$50,000</td>
+                    </tr>
+                    <tr className="border-b border-gray-200 hover:bg-gray-50">
+                      <td className="py-3 px-4 text-gray-700 font-medium">25</td>
+                      <td className="text-right py-3 px-4 text-gray-900 font-semibold">$180,000</td>
+                      <td className="text-right py-3 px-4 text-gray-900 font-semibold">$125,000</td>
+                      <td className="text-right py-3 px-4 text-orange-600 font-bold">-$55,000</td>
+                    </tr>
+                    <tr className="bg-blue-50">
+                      <td className="py-3 px-4 text-gray-700 font-bold">30</td>
+                      <td className="text-right py-3 px-4 text-blue-600 font-bold">$240,000</td>
+                      <td className="text-right py-3 px-4 text-gray-900 font-semibold">$150,000</td>
+                      <td className="text-right py-3 px-4 text-orange-600 font-bold">-$90,000</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="mt-6 p-4 bg-blue-50 rounded-lg border-l-4 border-blue-500">
+                <p className="text-sm text-gray-700">
+                  <strong>Key Takeaway:</strong> After 30 years, the 30-year mortgage is paid off and you own the home free and clear. With the 50-year mortgage, you've only built $150,000 in equity and still owe 20 more years of payments. If you rely on home equity for retirement or refinancing, the slower accumulation could be a significant disadvantage.
+                </p>
               </div>
             </div>
           </div>
@@ -268,6 +459,188 @@ export default function Home() {
                 <h3 className="text-xl font-bold text-gray-900 mb-2">50 Year Mortgage FAQ</h3>
                 <p className="text-gray-600">Get answers to frequently asked questions about 50 year mortgages, Trump's proposal, and long-term home financing.</p>
               </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* Alternative Solutions Section */}
+        <section className="py-16 bg-gray-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center">
+              Can't Wait for 50-Year Mortgages? Consider These Real Alternatives
+            </h2>
+            <p className="text-center text-gray-600 mb-12 max-w-3xl mx-auto">
+              Since 50-year mortgages aren't yet available, here are actual mortgage products you can use today to manage your payments:
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* 40-Year Mortgage */}
+              <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 hover:shadow-xl transition-shadow">
+                <div className="w-14 h-14 bg-blue-100 rounded-lg flex items-center justify-center mb-6">
+                  <svg className="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">40-Year Mortgage</h3>
+                <p className="text-gray-700 mb-4">
+                  Some lenders offer 40-year mortgages as a middle ground between 30 and 50 years. You get more moderate monthly savings than 50 years while keeping total interest costs more reasonable.
+                </p>
+                <ul className="space-y-2 text-sm text-gray-600 mb-4">
+                  <li className="flex items-start gap-2">
+                    <svg className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    <span>More balanced monthly savings vs interest cost</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <svg className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    <span>Available through some conventional lenders</span>
+                  </li>
+                </ul>
+                <p className="text-xs text-gray-500">Availability varies by lender and credit profile</p>
+              </div>
+
+              {/* FHA Loans */}
+              <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 hover:shadow-xl transition-shadow">
+                <div className="w-14 h-14 bg-purple-100 rounded-lg flex items-center justify-center mb-6">
+                  <svg className="w-7 h-7 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-3m0 0l7-4 7 4M5 9v10a1 1 0 001 1h12a1 1 0 001-1V9m-9 11l4-4m-4 4l-4-4m9-5l-4-4m4 4l4-4" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">FHA Loans</h3>
+                <p className="text-gray-700 mb-4">
+                  FHA loans allow you to put down as little as 3.5% instead of 20%, which means lower monthly payments without needing a 50-year loan.
+                </p>
+                <ul className="space-y-2 text-sm text-gray-600 mb-4">
+                  <li className="flex items-start gap-2">
+                    <svg className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    <span>Lower down payment requirements</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <svg className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    <span>More flexible credit requirements</span>
+                  </li>
+                </ul>
+                <p className="text-xs text-gray-500">Note: Includes mortgage insurance premium (MIP)</p>
+              </div>
+
+              {/* ARM Mortgages */}
+              <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 hover:shadow-xl transition-shadow">
+                <div className="w-14 h-14 bg-green-100 rounded-lg flex items-center justify-center mb-6">
+                  <svg className="w-7 h-7 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">ARM Loans (5/1, 7/1, 10/1)</h3>
+                <p className="text-gray-700 mb-4">
+                  Adjustable-rate mortgages offer lower initial rates (often 0.5-1% lower than fixed) for 5, 7, or 10 years, then adjust to market rates.
+                </p>
+                <ul className="space-y-2 text-sm text-gray-600 mb-4">
+                  <li className="flex items-start gap-2">
+                    <svg className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    <span>Significantly lower initial payments</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <svg className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    <span>Good if you plan to sell/refinance within the fixed period</span>
+                  </li>
+                </ul>
+                <p className="text-xs text-gray-500">Risk: Payments increase after fixed period</p>
+              </div>
+
+              {/* Biweekly Payments */}
+              <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 hover:shadow-xl transition-shadow">
+                <div className="w-14 h-14 bg-orange-100 rounded-lg flex items-center justify-center mb-6">
+                  <svg className="w-7 h-7 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 0v4m-8 8v4m8-4v4M3 9h18M3 19h18a2 2 0 002-2V7a2 2 0 00-2-2H3a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">Biweekly Payments</h3>
+                <p className="text-gray-700 mb-4">
+                  Instead of monthly payments, pay every 2 weeks. This results in 26 payments per year instead of 12, which accelerates equity building and interest savings.
+                </p>
+                <ul className="space-y-2 text-sm text-gray-600 mb-4">
+                  <li className="flex items-start gap-2">
+                    <svg className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    <span>Shorten 30-year loan to ~22 years</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <svg className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    <span>Works with most standard 30-year loans</span>
+                  </li>
+                </ul>
+                <p className="text-xs text-gray-500">Aligns payment schedule with biweekly paychecks</p>
+              </div>
+
+              {/* Refinancing */}
+              <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 hover:shadow-xl transition-shadow">
+                <div className="w-14 h-14 bg-red-100 rounded-lg flex items-center justify-center mb-6">
+                  <svg className="w-7 h-7 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">Rate/Term Refinancing</h3>
+                <p className="text-gray-700 mb-4">
+                  If rates drop, refinance to a new 30-year loan at a lower rate. This reduces your monthly payment without committing to a longer loan term.
+                </p>
+                <ul className="space-y-2 text-sm text-gray-600 mb-4">
+                  <li className="flex items-start gap-2">
+                    <svg className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    <span>Flexible - refinance when rates are favorable</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <svg className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    <span>Can lower payment without extending loan term</span>
+                  </li>
+                </ul>
+                <p className="text-xs text-gray-500">Consider closing costs and how long you plan to stay</p>
+              </div>
+
+              {/* Root Cause */}
+              <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 hover:shadow-xl transition-shadow">
+                <div className="w-14 h-14 bg-indigo-100 rounded-lg flex items-center justify-center mb-6">
+                  <svg className="w-7 h-7 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">Address Root Cause</h3>
+                <p className="text-gray-700 mb-4">
+                  Rather than extending loans, consider working with an advisor to increase income, improve credit score for better rates, or look at more affordable homes.
+                </p>
+                <ul className="space-y-2 text-sm text-gray-600 mb-4">
+                  <li className="flex items-start gap-2">
+                    <svg className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    <span>Long-term financial health</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <svg className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    <span>Avoid decades of high debt burden</span>
+                  </li>
+                </ul>
+                <p className="text-xs text-gray-500">Work with a financial advisor for personalized guidance</p>
+              </div>
             </div>
           </div>
         </section>

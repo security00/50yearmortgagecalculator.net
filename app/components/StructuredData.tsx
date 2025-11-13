@@ -1,7 +1,7 @@
 import Script from 'next/script';
 
 interface StructuredDataProps {
-  type?: 'website' | 'calculator' | 'faq' | 'article';
+  type?: 'website' | 'calculator' | 'faq' | 'article' | 'breadcrumb' | 'howto' | 'video';
   data?: any;
 }
 
@@ -91,6 +91,56 @@ export default function StructuredData({ type = 'website', data }: StructuredDat
           },
           datePublished: data?.datePublished || new Date().toISOString(),
           dateModified: data?.dateModified || new Date().toISOString(),
+        };
+
+      case 'breadcrumb':
+        return {
+          ...baseData,
+          '@type': 'BreadcrumbList',
+          itemListElement:
+            data?.items?.map((item: any, index: number) => ({
+              '@type': 'ListItem',
+              position: index + 1,
+              name: item.name,
+              item: item.url,
+            })) || [],
+        };
+
+      case 'howto':
+        return {
+          ...baseData,
+          '@type': 'HowTo',
+          name: data?.name || 'How to use the 50 Year Mortgage Calculator',
+          description:
+            data?.description ||
+            'Enter home price, down payment, interest rate, and term to instantly see monthly payments and amortization.',
+          totalTime: data?.totalTime || 'PT1M',
+          step: (data?.steps || [
+            'Enter home price',
+            'Enter down payment',
+            'Set interest rate and term',
+            'Review monthly payment and schedule',
+          ]).map((s: string) => ({ '@type': 'HowToStep', name: s })),
+        };
+
+      case 'video':
+        return {
+          ...baseData,
+          '@type': 'VideoObject',
+          name: data?.title || 'Policy update video',
+          description: data?.description || 'Official policy update related to 50-year mortgage proposal',
+          thumbnailUrl: data?.thumbnailUrl || 'https://50yearmortgagecalculator.net/opengraph-image',
+          uploadDate: data?.uploadDate || new Date().toISOString(),
+          contentUrl: data?.contentUrl,
+          embedUrl: data?.embedUrl,
+          publisher: {
+            '@type': 'Organization',
+            name: '50 Year Mortgage Calculator',
+            logo: {
+              '@type': 'ImageObject',
+              url: 'https://50yearmortgagecalculator.net/opengraph-image',
+            },
+          },
         };
 
       default:
