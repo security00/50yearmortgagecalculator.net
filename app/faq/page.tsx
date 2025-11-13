@@ -98,10 +98,29 @@ export default function FAQPage() {
           </div>
         </section>
 
+        {/* Expert Context Notice */}
+        <section className="py-8 bg-blue-50 border-b border-blue-200">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex gap-3">
+              <div className="flex-shrink-0 mt-0.5">
+                <svg className="h-5 w-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="font-semibold text-blue-900 mb-1">Expert Perspectives Included</h3>
+                <p className="text-sm text-blue-800">
+                  This FAQ integrates analysis and commentary from Fortune, UBS, NPR, Wolf Street, and Bloomberg. Real user scenarios help illustrate key concepts.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* FAQ Content */}
         <section className="py-16">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="space-y-6">
+            <div className="space-y-8">
               {faqs.map((faq, index) => (
                 <div key={faq.id} id={faq.id} className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 scroll-mt-20">
                   <div className="flex items-start gap-4">
@@ -110,11 +129,222 @@ export default function FAQPage() {
                     </div>
                     <div className="flex-1">
                       <h2 className="text-2xl font-bold text-gray-900 mb-4">{faq.question}</h2>
-                      <p className="text-gray-700 leading-relaxed">{faq.answer}</p>
+                      <p className="text-gray-700 leading-relaxed mb-4">{faq.answer}</p>
+
+                      {/* Expert Commentary - Conditional based on FAQ ID */}
+                      {faq.id === "trump-proposal" && (
+                        <div className="mt-6 p-4 bg-orange-50 border-l-4 border-orange-500 rounded">
+                          <div className="flex gap-2">
+                            <span className="text-orange-600 font-bold flex-shrink-0">💼</span>
+                            <div className="text-sm text-orange-900">
+                              <strong>Fortune/UBS Analysis:</strong> The proposal would save approximately $119/month on a $300,000 home loan, but double total interest costs. As Fortune notes: "Is an extra $119 per month worth another 20 years of borrowing?"
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {faq.id === "how-it-works" && (
+                        <div className="mt-6 p-4 bg-blue-50 border-l-4 border-blue-500 rounded">
+                          <div className="flex gap-2">
+                            <span className="text-blue-600 font-bold flex-shrink-0">📊</span>
+                            <div className="text-sm text-blue-900">
+                              <strong>Key Metric:</strong> On a $300,000 loan at 6.5%, your first payment on a 50-year mortgage allocates only ~$325 to principal and ~$1,452 to interest. This ratio improves very slowly over time.
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {faq.id === "pros-cons" && (
+                        <div className="mt-6 space-y-3">
+                          <div className="p-4 bg-green-50 border-l-4 border-green-500 rounded">
+                            <div className="flex gap-2">
+                              <span className="text-green-600 font-bold flex-shrink-0">✓</span>
+                              <div className="text-sm text-green-900">
+                                <strong>Bloomberg Perspective:</strong> "Could help some borrowers, but addresses affordability through payment reduction rather than addressing root cause—housing prices are too high."
+                              </div>
+                            </div>
+                          </div>
+                          <div className="p-4 bg-red-50 border-l-4 border-red-500 rounded">
+                            <div className="flex gap-2">
+                              <span className="text-red-600 font-bold flex-shrink-0">⚠</span>
+                              <div className="text-sm text-red-900">
+                                <strong>Wolf Street Analysis:</strong> "While appearing to help buyers with affordability, a 50-year mortgage primarily benefits lenders. It's a terrible deal for homeowners who pay double the interest, and a superb deal for banks."
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {faq.id === "comparison" && (
+                        <div className="mt-6 p-4 bg-purple-50 border-l-4 border-purple-500 rounded">
+                          <div className="flex gap-2">
+                            <span className="text-purple-600 font-bold flex-shrink-0">🤔</span>
+                            <div className="text-sm text-purple-900">
+                              <strong>Decision Framework:</strong> Use our mortgage comparison tool to run scenarios with your actual numbers. Plug in your home price, down payment, and interest rate to see the exact monthly payment difference and lifetime interest cost for each term length.
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {faq.id === "interest-calculation" && (
+                        <div className="mt-6 p-4 bg-orange-50 border-l-4 border-orange-500 rounded">
+                          <div className="flex gap-2">
+                            <span className="text-orange-600 font-bold flex-shrink-0">💰</span>
+                            <div className="text-sm text-orange-900">
+                              <strong>Real Example:</strong> On a $300,000 loan at 6.5% (20% down):
+                              <ul className="mt-2 space-y-1 ml-2">
+                                <li>• 30-Year: $382,633 total interest paid</li>
+                                <li>• 50-Year: $766,200 total interest paid</li>
+                                <li>• <strong>Difference: $383,567 more</strong> — equivalent to 3 additional years of payments</li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {faq.id === "first-time-buyers" && (
+                        <div className="mt-6 space-y-3">
+                          <div className="p-4 bg-green-50 border-l-4 border-green-500 rounded">
+                            <div className="text-sm text-green-900 font-semibold mb-2">User Scenario: Sarah (Age 28, First-Time Buyer)</div>
+                            <div className="text-sm text-green-800 leading-relaxed">
+                              Sarah earns $55K/year and found a $280K condo in a competitive market. With a 30-year mortgage at 6.5% and 10% down, her payment would be $1,644/month. With a 50-year mortgage, it drops to $1,538/month. She chooses the 50-year option for now, planning to: (1) refinance in 5-7 years when her income increases, or (2) make extra payments if bonuses come. The lower initial payment helps her qualify and leaves cash for retirement savings.
+                            </div>
+                          </div>
+                          <div className="p-4 bg-red-50 border-l-4 border-red-500 rounded">
+                            <div className="text-sm text-red-900 font-semibold mb-2">Caution Scenario: Robert (Age 45, Limited Planning)</div>
+                            <div className="text-sm text-red-800 leading-relaxed">
+                              Robert is 45 and takes a 50-year mortgage at 6.5% on a $250K loan. His payment is $1,182/month instead of $1,264 with a 30-year loan. However, he'll be paying until age 95—potentially past his expected life expectancy. He doesn't plan to refinance. This could lock him into decades of payments during retirement when his income is fixed. He should have chosen the 30-year option.
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Decision Helper Section */}
+        <section className="py-16 bg-gradient-to-r from-blue-50 to-indigo-50 border-t border-blue-200">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
+              Should You Consider a 50-Year Mortgage?
+            </h2>
+
+            <div className="grid md:grid-cols-2 gap-8 mb-8">
+              {/* Good Candidates */}
+              <div className="bg-white rounded-2xl shadow-lg p-6 border-2 border-green-200">
+                <div className="flex items-center gap-2 mb-4">
+                  <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <h3 className="text-xl font-bold text-green-900">Consider a 50-Year Mortgage If:</h3>
+                </div>
+                <ul className="space-y-3 text-sm text-gray-700">
+                  <li className="flex gap-2">
+                    <span className="text-green-600 font-bold">✓</span>
+                    <span>You're a first-time buyer who struggles to qualify for a 30-year mortgage</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-green-600 font-bold">✓</span>
+                    <span>Monthly payment is your primary concern and you have 20+ year timeline</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-green-600 font-bold">✓</span>
+                    <span>You have clear plans to refinance within 5-10 years as income grows</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-green-600 font-bold">✓</span>
+                    <span>You expect to make extra principal payments when possible</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-green-600 font-bold">✓</span>
+                    <span>You're in an extremely competitive market and need maximum affordability</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-green-600 font-bold">✓</span>
+                    <span>You have decades of earning potential ahead and can invest savings elsewhere</span>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Poor Candidates */}
+              <div className="bg-white rounded-2xl shadow-lg p-6 border-2 border-red-200">
+                <div className="flex items-center gap-2 mb-4">
+                  <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <h3 className="text-xl font-bold text-red-900">Avoid a 50-Year Mortgage If:</h3>
+                </div>
+                <ul className="space-y-3 text-sm text-gray-700">
+                  <li className="flex gap-2">
+                    <span className="text-red-600 font-bold">✗</span>
+                    <span>You're already 40+ years old (could extend payments to retirement age)</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-red-600 font-bold">✗</span>
+                    <span>You can afford a 30-year or 15-year mortgage (better long-term value)</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-red-600 font-bold">✗</span>
+                    <span>Building home equity quickly is important for your financial plan</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-red-600 font-bold">✗</span>
+                    <span>You have uncertain income or expect job changes/unemployment risk</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-red-600 font-bold">✗</span>
+                    <span>You plan to sell the home within 5-10 years (refinancing costs too high)</span>
+                  </li>
+                  <li className="flex gap-2">
+                    <span className="text-red-600 font-bold">✗</span>
+                    <span>You're uncomfortable with paying 2x the interest over loan lifetime</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Action Items */}
+            <div className="bg-white rounded-2xl shadow-lg p-8 border border-indigo-200">
+              <h3 className="text-xl font-bold text-gray-900 mb-6">Next Steps</h3>
+              <div className="grid md:grid-cols-3 gap-6">
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0">
+                    <div className="flex items-center justify-center h-10 w-10 rounded-md bg-indigo-500 text-white">
+                      <span className="text-lg font-bold">1</span>
+                    </div>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-1">Calculate Your Scenario</h4>
+                    <p className="text-sm text-gray-600">Use our 50-year mortgage calculator to see exact monthly payments and total interest for your home price, down payment, and rate.</p>
+                  </div>
+                </div>
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0">
+                    <div className="flex items-center justify-center h-10 w-10 rounded-md bg-indigo-500 text-white">
+                      <span className="text-lg font-bold">2</span>
+                    </div>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-1">Compare Loan Terms</h4>
+                    <p className="text-sm text-gray-600">Visit our comparison page to see 15, 20, 30, 40, and 50 year mortgages side-by-side and understand the trade-offs for your specific situation.</p>
+                  </div>
+                </div>
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0">
+                    <div className="flex items-center justify-center h-10 w-10 rounded-md bg-indigo-500 text-white">
+                      <span className="text-lg font-bold">3</span>
+                    </div>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-1">Consult an Advisor</h4>
+                    <p className="text-sm text-gray-600">Speak with a financial advisor or mortgage professional to ensure any mortgage choice aligns with your long-term financial goals and timeline.</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </section>
