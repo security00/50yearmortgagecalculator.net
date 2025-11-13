@@ -186,7 +186,7 @@ export default function MortgageCalculator() {
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = `amortization_${loanTerm}yr_${homePrice}.csv`;
+    a.download = `amortization_30yr_${homePrice}.csv`;
     a.click();
     URL.revokeObjectURL(a.href);
   };
