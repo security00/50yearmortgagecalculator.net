@@ -3,56 +3,30 @@
 import { useState, useEffect } from 'react';
 
 export default function DismissibleNotice() {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [isScrollingDown, setIsScrollingDown] = useState(false);
+  const [isDismissed, setIsDismissed] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
-  const [lastScrollY, setLastScrollY] = useState(0);
 
   useEffect(() => {
     setIsMounted(true);
     // Check localStorage for dismissal preference
-    const isDismissed = localStorage.getItem('importantNotice_dismissed');
-    setIsExpanded(!isDismissed);
+    const dismissed = localStorage.getItem('importantNotice_dismissed') === 'true';
+    setIsDismissed(dismissed);
   }, []);
 
-  // Handle scroll behavior - hide banner when scrolling down, show when scrolling up
-  useEffect(() => {
-    if (!isMounted || !isExpanded) return;
-
-    let ticking = false;
-
-    const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          const currentScrollY = window.scrollY;
-
-          // Only hide if user has scrolled down more than 100px
-          if (currentScrollY > lastScrollY && currentScrollY > 100) {
-            setIsScrollingDown(true);
-          } else {
-            setIsScrollingDown(false);
-          }
-
-          setLastScrollY(currentScrollY);
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastScrollY, isExpanded, isMounted]);
-
   const handleClose = () => {
-    setIsExpanded(false);
+    setIsDismissed(true);
+    setShowModal(false);
     localStorage.setItem('importantNotice_dismissed', 'true');
   };
 
-  const handleReset = () => {
+  const handleLearnMore = () => {
+    setShowModal(true);
+  };
+
+  const handleShowNotice = () => {
+    setIsDismissed(false);
     localStorage.removeItem('importantNotice_dismissed');
-    setIsExpanded(true);
-    setIsScrollingDown(false);
   };
 
   // Don't render on server side to avoid hydration mismatch
@@ -62,64 +36,145 @@ export default function DismissibleNotice() {
 
   return (
     <>
-      {/* Expanded Notice Banner - Smart hide on scroll down */}
-      {isExpanded && (
-        <div
-          className={`fixed top-0 left-0 right-0 z-50 bg-yellow-50 border-b-4 border-yellow-400 shadow-lg transition-transform duration-300 ease-in-out ${
-            isScrollingDown ? '-translate-y-full' : 'translate-y-0'
-          }`}
-        >
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div className="flex gap-4 items-start">
+      {/* Compact Notice Bar - Between Hero and Calculator (Non-fixed, scrollable) */}
+      {!isDismissed && (
+        <div className="relative w-full bg-yellow-50 border-b-2 border-yellow-300 px-4 sm:px-6 lg:px-8 py-3 animate-in fade-in slide-in-from-top-2">
+          <div className="max-w-7xl mx-auto flex gap-3 items-center justify-between">
+            {/* Icon and Content */}
+            <div className="flex gap-3 items-center flex-1 min-w-0">
               {/* Warning Icon */}
-              <div className="flex-shrink-0 mt-0.5">
-                <svg className="h-6 w-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="flex-shrink-0">
+                <svg className="h-5 w-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
 
-              {/* Content */}
-              <div className="flex-1">
-                <h3 className="text-lg font-semibold text-yellow-900 mb-1">Important Notice</h3>
-                <p className="text-yellow-800 text-sm md:text-base">
-                  <strong>50-year mortgages are currently NOT available</strong> in the U.S. market. This calculator helps you understand the Trump administration's proposal, which requires Congressional approval and changes to federal lending regulations (Dodd-Frank Act) to implement. Use this tool to evaluate the theoretical financial impact and compare it with actual 30-year mortgage options available today.
+              {/* Text */}
+              <div className="flex-1 min-w-0">
+                <p className="text-sm text-yellow-900">
+                  <strong>⚠️ Important:</strong> 50-year mortgages are currently <strong>NOT available</strong> in the U.S. market. This is a proposal under review.
+                  <button
+                    onClick={handleLearnMore}
+                    className="ml-2 text-yellow-700 hover:text-yellow-900 underline font-semibold"
+                  >
+                    Learn more
+                  </button>
                 </p>
               </div>
-
-              {/* Close Button */}
-              <button
-                onClick={handleClose}
-                aria-label="Close notice"
-                className="flex-shrink-0 mt-0.5 p-1 rounded-lg hover:bg-yellow-200 transition-colors text-yellow-600 hover:text-yellow-900"
-              >
-                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
             </div>
+
+            {/* Close Button */}
+            <button
+              onClick={handleClose}
+              aria-label="Close notice"
+              className="flex-shrink-0 p-1 rounded hover:bg-yellow-200 transition-colors text-yellow-600 hover:text-yellow-900"
+            >
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
         </div>
       )}
 
-      {/* Spacer when banner is visible and expanded (to prevent content overlap) */}
-      {isExpanded && (
-        <div className={`h-28 sm:h-24 transition-all duration-300 ${isScrollingDown ? 'h-0' : 'h-28 sm:h-24'}`}></div>
-      )}
-
-      {/* Compact Notice Pill - Shows when dismissed or scrolled down */}
-      {(!isExpanded || isScrollingDown) && isMounted && (
-        <div className="fixed bottom-6 right-6 z-40 animate-in">
+      {/* Floating Pill - When notice is dismissed */}
+      {isDismissed && isMounted && (
+        <div className="fixed bottom-6 right-6 z-40 animate-in fade-in slide-in-from-bottom-2">
           <button
-            onClick={handleReset}
-            className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white px-4 py-3 rounded-full shadow-lg text-sm font-semibold transition-all duration-200 hover:shadow-xl hover:scale-105 flex items-center gap-2"
+            onClick={handleShowNotice}
+            className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white px-4 py-3 rounded-full shadow-lg text-sm font-semibold transition-all duration-200 hover:shadow-xl hover:scale-105 flex items-center gap-2 whitespace-nowrap"
             aria-label="Show important notice"
           >
-            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="h-5 w-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <span>Show Notice</span>
+            <span>Notice</span>
           </button>
         </div>
+      )}
+
+      {/* Full Notice Modal */}
+      {showModal && (
+        <>
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 z-40 bg-black/50 animate-in fade-in"
+            onClick={() => setShowModal(false)}
+          />
+
+          {/* Modal */}
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in zoom-in-95">
+            <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+              {/* Header */}
+              <div className="bg-yellow-50 border-b-2 border-yellow-300 px-6 py-4 flex items-start justify-between">
+                <div className="flex gap-3 items-start flex-1">
+                  <svg className="h-6 w-6 text-yellow-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <h2 className="text-xl font-bold text-yellow-900">Important Notice</h2>
+                </div>
+                <button
+                  onClick={() => setShowModal(false)}
+                  className="p-1 rounded hover:bg-yellow-200 transition-colors text-yellow-600 hover:text-yellow-900 flex-shrink-0"
+                >
+                  <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              {/* Content */}
+              <div className="p-6 space-y-4">
+                <p className="text-gray-700 leading-relaxed">
+                  <strong>50-year mortgages are currently NOT available</strong> in the U.S. market. This calculator and website are dedicated to understanding the Trump administration's proposal for an extended mortgage term.
+                </p>
+
+                <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+                  <p className="text-sm text-blue-900">
+                    <strong>Key Point:</strong> The 50-year mortgage proposal requires Congressional approval and significant changes to federal lending regulations (Dodd-Frank Act) before it can be implemented by lenders.
+                  </p>
+                </div>
+
+                <p className="text-gray-700 leading-relaxed">
+                  This tool helps you understand the theoretical financial impact of a 50-year mortgage by showing:
+                </p>
+
+                <ul className="list-disc ml-5 space-y-2 text-gray-700">
+                  <li>Monthly payment comparisons (30-year vs 50-year)</li>
+                  <li>Total interest paid over the life of the loan</li>
+                  <li>Complete amortization schedules</li>
+                  <li>Real-world comparison with actual 30-year mortgage options available today</li>
+                </ul>
+
+                <div className="bg-orange-50 border-l-4 border-orange-500 p-4 rounded">
+                  <p className="text-sm text-orange-900">
+                    <strong>Why This Matters:</strong> As housing affordability becomes increasingly challenging, understanding different mortgage options helps you make informed financial decisions. This calculator allows you to evaluate what a 50-year mortgage would mean for your specific situation.
+                  </p>
+                </div>
+
+                <p className="text-sm text-gray-600 pt-4 border-t border-gray-200">
+                  For the latest information on mortgage proposals and policies, visit <a href="/updates" className="text-blue-600 hover:text-blue-800 font-semibold">Policy Updates</a> or check the <a href="/faq" className="text-blue-600 hover:text-blue-800 font-semibold">FAQ</a>.
+                </p>
+              </div>
+
+              {/* Footer */}
+              <div className="bg-gray-50 border-t border-gray-200 px-6 py-4 flex gap-3 justify-end">
+                <button
+                  onClick={() => setShowModal(false)}
+                  className="px-4 py-2 rounded-lg bg-gray-200 text-gray-800 font-semibold hover:bg-gray-300 transition-colors"
+                >
+                  Got it
+                </button>
+                <button
+                  onClick={handleClose}
+                  className="px-4 py-2 rounded-lg bg-yellow-500 text-white font-semibold hover:bg-yellow-600 transition-colors"
+                >
+                  Dismiss
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
       )}
     </>
   );
