@@ -3,6 +3,7 @@ import MortgageCalculator from './components/MortgageCalculator';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import StructuredData from './components/StructuredData';
+import DismissibleNotice from './components/DismissibleNotice';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
@@ -17,6 +18,7 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <>
+      <DismissibleNotice />
       <StructuredData type="website" />
       <StructuredData type="calculator" />
       <StructuredData type="howto" />
@@ -45,25 +47,6 @@ export default function Home() {
                   <div className="text-sm text-blue-100">Detailed Analysis</div>
                   <div className="text-lg font-bold">Amortization Schedule</div>
                 </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Important Notice */}
-        <section className="bg-yellow-50 border-b-4 border-yellow-400 py-6">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex gap-4">
-              <div className="flex-shrink-0 mt-0.5">
-                <svg className="h-6 w-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-yellow-900 mb-1">Important Notice</h3>
-                <p className="text-yellow-800">
-                  <strong>50-year mortgages are currently NOT available</strong> in the U.S. market. This calculator helps you understand the Trump administration's proposal, which requires Congressional approval and changes to federal lending regulations (Dodd-Frank Act) to implement. Use this tool to evaluate the theoretical financial impact and compare it with actual 30-year mortgage options available today.
-                </p>
               </div>
             </div>
           </div>
