@@ -24,43 +24,24 @@ export default function Home() {
       <StructuredData type="howto" />
       <Header />
       <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-        {/* Hero Section */}
-        <section className="bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 text-white py-16">
+        {/* Hero Section - Compact for first screen calculator visibility */}
+        <section className="bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 text-white py-8 md:py-10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-4xl mx-auto">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3 leading-tight">
                 50 Year Mortgage Calculator
               </h1>
-              <p className="text-xl md:text-2xl text-blue-100 mb-8 leading-relaxed">
-                Use our free 50 year mortgage calculator to calculate your monthly payments and total costs for the Trump administration's proposed 50-year fixed-rate mortgage program. Compare 50 year mortgage rates with traditional 30-year loans to make informed homeownership decisions.
+              <p className="text-lg md:text-xl text-blue-100 mb-4 leading-relaxed">
+                Calculate monthly payments and compare 50-year vs 30-year mortgages instantly.
               </p>
-              <div className="flex flex-wrap justify-center gap-4">
-                <div className="bg-white/10 backdrop-blur-sm rounded-lg px-6 py-3 border border-white/20">
-                  <div className="text-sm text-blue-100">Free Calculator</div>
-                  <div className="text-lg font-bold">No Registration</div>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-lg px-6 py-3 border border-white/20">
-                  <div className="text-sm text-blue-100">Instant Results</div>
-                  <div className="text-lg font-bold">Real-Time Calculations</div>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-lg px-6 py-3 border border-white/20">
-                  <div className="text-sm text-blue-100">Detailed Analysis</div>
-                  <div className="text-lg font-bold">Amortization Schedule</div>
-                </div>
-              </div>
             </div>
           </div>
         </section>
 
         {/* Calculator Section */}
-        <section className="py-16">
+        <section className="py-8 md:py-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center max-w-3xl mx-auto mb-12">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">Free 50 Year Mortgage Calculator</h2>
-              <p className="text-lg text-gray-600">
-                Our 50 year mortgage calculator helps you instantly calculate monthly payments, total interest costs, and view detailed amortization schedules for Trump's proposed 50-year mortgage program. Simply enter your home price, down payment, and interest rate to get started.
-              </p>
-            </div>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6 text-center">Free Calculator</h2>
             <MortgageCalculator />
           </div>
         </section>
