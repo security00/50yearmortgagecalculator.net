@@ -18,17 +18,52 @@ export const metadata: Metadata = {
   },
 };
 
-const POLICY_VIDEO_ID = process.env.NEXT_PUBLIC_POLICY_VIDEO_ID;
+const POLICY_VIDEO_IDS = process.env.NEXT_PUBLIC_POLICY_VIDEO_IDS
+  ? process.env.NEXT_PUBLIC_POLICY_VIDEO_IDS.split(',').map(id => id.trim())
+  : [];
+
+interface VideoData {
+  id: string;
+  embedUrl: string;
+  contentUrl: string;
+  title: string;
+  description: string;
+}
+
+const VIDEO_METADATA: Record<string, Omit<VideoData, 'id' | 'embedUrl' | 'contentUrl'>> = {
+  'djYdIUmGu-w': {
+    title: 'Policy Briefing on Mortgage Proposal',
+    description: 'Official briefing discussing the proposed 50-year mortgage program and its policy implications.'
+  },
+  'WWmI9KDSl8k': {
+    title: 'Housing Affordability Analysis',
+    description: 'Expert analysis on housing affordability challenges and proposed solutions.'
+  },
+  '1A6nZ8Sx33E': {
+    title: 'Mortgage Market Impact Review',
+    description: 'Discussion on potential impacts of extended mortgage terms on the lending market.'
+  },
+  'V7KRGN38Z6k': {
+    title: 'Financial Planning Perspectives',
+    description: 'Expert perspectives on long-term financial planning with extended mortgage terms.'
+  },
+  '7d9coHPMg6s': {
+    title: 'Policy Implementation Overview',
+    description: 'Overview of implementation considerations for the proposed mortgage policy.'
+  }
+};
+
+const videos: VideoData[] = POLICY_VIDEO_IDS.map(id => ({
+  id,
+  embedUrl: `https://www.youtube-nocookie.com/embed/${id}`,
+  contentUrl: `https://youtu.be/${id}`,
+  ...VIDEO_METADATA[id] || {
+    title: 'Policy Update Video',
+    description: 'Video briefing on the 50-year mortgage proposal.'
+  }
+}));
 
 export default function PolicyUpdatesPage() {
-  const videoEmbedUrl = POLICY_VIDEO_ID
-    ? `https://www.youtube-nocookie.com/embed/${POLICY_VIDEO_ID}`
-    : null;
-
-  const videoContentUrl = POLICY_VIDEO_ID
-    ? `https://youtu.be/${POLICY_VIDEO_ID}`
-    : undefined;
-
   const lastUpdated = new Date().toISOString();
 
   return (
@@ -47,19 +82,19 @@ export default function PolicyUpdatesPage() {
         datePublished: lastUpdated,
         dateModified: lastUpdated,
       }} />
-      {videoEmbedUrl && (
+      {videos.map((video) => (
         <StructuredData
+          key={video.id}
           type="video"
           data={{
-            title: 'Official video briefing on the 50-year mortgage proposal',
-            description:
-              'An official briefing related to the 50-year mortgage proposal. Embedded via privacy-enhanced mode.',
-            embedUrl: videoEmbedUrl,
-            contentUrl: videoContentUrl,
+            title: video.title,
+            description: video.description,
+            embedUrl: video.embedUrl,
+            contentUrl: video.contentUrl,
             uploadDate: lastUpdated,
           }}
         />
-      )}
+      ))}
 
       <Header />
       <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
@@ -76,16 +111,60 @@ export default function PolicyUpdatesPage() {
           </div>
         </section>
 
-        {/* Video Embed */}
+        {/* Video Embed Section */}
         <section className="py-12">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-              <h2 className="text-2xl font-bold text-gray-900 mb-3">Official Briefing (Video)</h2>
-              {!videoEmbedUrl ? (
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {videos.length > 0 ? (
+              <div>
+                <h2 className="text-3xl font-bold text-gray-900 mb-8">Official Policy Briefings (Videos)</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                  {videos.map((video) => (
+                    <div key={video.id} className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100 hover:shadow-xl transition-shadow">
+                      <div className="aspect-video w-full bg-black">
+                        <iframe
+                          className="w-full h-full"
+                          src={video.embedUrl}
+                          title={video.title}
+                          loading="lazy"
+                          allow="accelerometer; encrypted-media; picture-in-picture"
+                          allowFullScreen
+                          referrerPolicy="strict-origin-when-cross-origin"
+                        />
+                      </div>
+                      <div className="p-4">
+                        <h3 className="font-bold text-gray-900 mb-2 line-clamp-2">{video.title}</h3>
+                        <p className="text-sm text-gray-600 mb-3 line-clamp-2">{video.description}</p>
+                        <a
+                          href={video.contentUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sm text-blue-600 hover:text-blue-800 font-semibold inline-flex items-center gap-1"
+                        >
+                          Watch on YouTube →
+                        </a>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                  <h3 className="font-semibold text-gray-900 mb-3">About These Videos</h3>
+                  <p className="text-gray-700 mb-3">
+                    These videos provide authoritative perspectives from official sources, policy experts, and market analysts on the proposed 50-year mortgage program. Each video offers distinct insights into different aspects of the proposal.
+                  </p>
+                  <div className="bg-blue-50 border-l-4 border-blue-500 p-3 rounded">
+                    <p className="text-sm text-blue-900">
+                      <strong>Privacy Note:</strong> These videos are embedded using YouTube's privacy-enhanced mode, which does not track viewing behavior. All videos are presented for informational purposes.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+                <h2 className="text-2xl font-bold text-gray-900 mb-3">Official Briefing (Video)</h2>
                 <div className="text-gray-700">
                   <p className="mb-3">
-                    No official video embed configured. To enable, set <code className="bg-gray-100 px-1 py-0.5 rounded">NEXT_PUBLIC_POLICY_VIDEO_ID</code>
-                    to a YouTube video ID from an official source (e.g., C‑SPAN, White House, federal agencies). The embed uses privacy‑enhanced mode and does not autoplay.
+                    No policy videos configured. Videos will appear here once <code className="bg-gray-100 px-1 py-0.5 rounded">NEXT_PUBLIC_POLICY_VIDEO_IDS</code> environment variable is set with YouTube video IDs.
                   </p>
                   <ul className="list-disc ml-5 text-sm text-gray-600">
                     <li>Use authoritative channels; avoid partisan or third‑party commentary as sole sources.</li>
@@ -93,28 +172,8 @@ export default function PolicyUpdatesPage() {
                     <li>We also include source links and timestamps where relevant.</li>
                   </ul>
                 </div>
-              ) : (
-                <div className="aspect-video w-full rounded-xl overflow-hidden bg-black">
-                  <iframe
-                    className="w-full h-full"
-                    src={videoEmbedUrl}
-                    title="Official policy update video"
-                    loading="lazy"
-                    allow="accelerometer; encrypted-media; picture-in-picture"
-                    allowFullScreen
-                    referrerPolicy="strict-origin-when-cross-origin"
-                  />
-                </div>
-              )}
-
-              <div className="mt-6">
-                <h3 className="font-semibold text-gray-900 mb-2">Summary</h3>
-                <p className="text-gray-700">
-                  This section summarizes key statements related to the 50-year mortgage proposal, links to transcripts, and lists notable timestamps.
-                  Always verify details against primary sources.
-                </p>
               </div>
-            </div>
+            )}
           </div>
         </section>
 
