@@ -429,20 +429,29 @@ export default function MortgageCalculator() {
       {/* Amortization Table */}
       {amortization.length > 0 && (
         <div className="mt-8 bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
-          <div className="flex items-center justify-between gap-4 mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">Amortization Schedule</h2>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-1">Amortization Schedule (30-Year)</h2>
+              <p className="text-sm text-gray-600">Month-by-month breakdown of your mortgage payments</p>
+            </div>
             <div className="flex gap-3">
               <button
                 onClick={copyShareLink}
-                className="px-4 py-2 rounded-lg bg-blue-50 text-blue-600 font-semibold hover:bg-blue-100 border border-blue-200"
+                className="px-4 py-2 rounded-lg bg-blue-50 text-blue-600 font-semibold hover:bg-blue-100 border border-blue-200 transition-colors flex items-center gap-2"
               >
-                Copy Share Link
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+                Share
               </button>
               <button
                 onClick={exportCSV}
-                className="px-4 py-2 rounded-lg bg-gray-50 text-gray-700 font-semibold hover:bg-gray-100 border border-gray-200"
+                className="px-4 py-2 rounded-lg bg-gray-50 text-gray-700 font-semibold hover:bg-gray-100 border border-gray-200 transition-colors flex items-center gap-2"
               >
-                Export CSV
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                CSV
               </button>
             </div>
           </div>
@@ -450,42 +459,126 @@ export default function MortgageCalculator() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b-2 border-gray-200">
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Month</th>
-                  <th className="text-right py-3 px-4 font-semibold text-gray-700">Payment</th>
-                  <th className="text-right py-3 px-4 font-semibold text-gray-700">Principal</th>
-                  <th className="text-right py-3 px-4 font-semibold text-gray-700">Interest</th>
-                  <th className="text-right py-3 px-4 font-semibold text-gray-700">Balance</th>
+                <tr className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b-2 border-blue-200">
+                  <th className="text-left py-4 px-4 font-bold text-gray-900 rounded-tl-lg">Month</th>
+                  <th className="text-right py-4 px-4 font-bold text-gray-900">Payment</th>
+                  <th className="text-right py-4 px-4 font-bold text-green-700">
+                    <div className="flex items-center justify-end gap-1">
+                      <span>Principal</span>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                      </svg>
+                    </div>
+                  </th>
+                  <th className="text-right py-4 px-4 font-bold text-orange-700">
+                    <div className="flex items-center justify-end gap-1">
+                      <span>Interest</span>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
+                      </svg>
+                    </div>
+                  </th>
+                  <th className="text-right py-4 px-4 font-bold text-gray-900 rounded-tr-lg">Balance</th>
                 </tr>
               </thead>
               <tbody>
-                {displayedRows.map((row) => (
-                  <tr key={row.month} className="border-b border-gray-100 hover:bg-gray-50">
-                    <td className="py-3 px-4 text-gray-900 font-medium">{row.month}</td>
-                    <td className="py-3 px-4 text-right text-gray-900">{formatCurrencyDetailed(row.payment)}</td>
-                    <td className="py-3 px-4 text-right text-gray-900">{formatCurrencyDetailed(row.principal)}</td>
-                    <td className="py-3 px-4 text-right text-gray-900">{formatCurrencyDetailed(row.interest)}</td>
-                    <td className="py-3 px-4 text-right text-gray-900 font-medium">{formatCurrency(row.balance)}</td>
-                  </tr>
-                ))}
+                {displayedRows.map((row, index) => {
+                  const principalPercent = (row.principal / row.payment) * 100;
+                  const interestPercent = (row.interest / row.payment) * 100;
+                  const isYearEnd = row.month % 12 === 0;
+
+                  return (
+                    <tr
+                      key={row.month}
+                      className={`border-b border-gray-100 hover:bg-blue-50 transition-colors ${
+                        isYearEnd ? 'bg-blue-50/50 font-semibold' : ''
+                      }`}
+                    >
+                      <td className="py-4 px-4">
+                        <div className="flex items-center gap-2">
+                          <span className={`${isYearEnd ? 'text-blue-700 font-bold' : 'text-gray-900 font-medium'}`}>
+                            {row.month}
+                          </span>
+                          {isYearEnd && (
+                            <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-bold rounded">
+                              Year {row.month / 12}
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="py-4 px-4 text-right text-gray-900 font-medium">
+                        {formatCurrencyDetailed(row.payment)}
+                      </td>
+                      <td className="py-4 px-4 text-right">
+                        <div className="flex flex-col items-end gap-1">
+                          <span className="text-green-700 font-semibold">{formatCurrencyDetailed(row.principal)}</span>
+                          <div className="w-full max-w-[100px] bg-gray-200 rounded-full h-1.5">
+                            <div
+                              className="bg-green-500 h-1.5 rounded-full transition-all"
+                              style={{ width: `${principalPercent}%` }}
+                            />
+                          </div>
+                        </div>
+                      </td>
+                      <td className="py-4 px-4 text-right">
+                        <div className="flex flex-col items-end gap-1">
+                          <span className="text-orange-700 font-semibold">{formatCurrencyDetailed(row.interest)}</span>
+                          <div className="w-full max-w-[100px] bg-gray-200 rounded-full h-1.5">
+                            <div
+                              className="bg-orange-500 h-1.5 rounded-full transition-all"
+                              style={{ width: `${interestPercent}%` }}
+                            />
+                          </div>
+                        </div>
+                      </td>
+                      <td className="py-4 px-4 text-right">
+                        <span className="text-gray-900 font-bold">{formatCurrency(row.balance)}</span>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
+          </div>
+
+          {/* Legend */}
+          <div className="mt-6 p-4 bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl border border-gray-200">
+            <div className="flex flex-wrap items-center justify-center gap-6 text-sm">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                <span className="text-gray-700"><strong className="text-green-700">Principal:</strong> Reduces loan balance</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
+                <span className="text-gray-700"><strong className="text-orange-700">Interest:</strong> Cost of borrowing</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                <span className="text-gray-700"><strong className="text-blue-700">Year markers:</strong> Annual milestones</span>
+              </div>
+            </div>
           </div>
 
           {!showFullTable && amortization.length > 12 && (
             <button
               onClick={() => setShowFullTable(true)}
-              className="mt-4 w-full py-3 bg-blue-50 text-blue-600 font-semibold rounded-xl hover:bg-blue-100 transition-colors"
+              className="mt-6 w-full py-3 bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 font-bold rounded-xl hover:from-blue-100 hover:to-indigo-100 transition-all border-2 border-blue-200 flex items-center justify-center gap-2"
             >
-              Show Full Schedule ({amortization.length} months)
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+              Show Full Schedule ({amortization.length} months / {amortization.length / 12} years)
             </button>
           )}
 
           {showFullTable && (
             <button
               onClick={() => setShowFullTable(false)}
-              className="mt-4 w-full py-3 bg-gray-50 text-gray-600 font-semibold rounded-xl hover:bg-gray-100 transition-colors"
+              className="mt-6 w-full py-3 bg-gray-50 text-gray-700 font-semibold rounded-xl hover:bg-gray-100 transition-colors border border-gray-200 flex items-center justify-center gap-2"
             >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+              </svg>
               Show Less
             </button>
           )}
