@@ -9,6 +9,17 @@ interface MortgageResultsProps {
   formatCurrencyDetailed: (value: number) => string;
 }
 
+// Legacy helper placeholders to keep this backup component compiling.
+// The active implementation lives in MortgageResults.tsx; this file is not imported.
+const showDetails = false;
+const onToggleDetails = () => {};
+const taxMonthly = 0;
+const insuranceMonthlyBreakdown = 0;
+const hoaMonthlyBreakdown = 0;
+const pmiMonthlyBreakdown = 0;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const generateTermComparisonData = (): any[] => [];
+
 export function MortgageResults({
   result30,
   result50,
