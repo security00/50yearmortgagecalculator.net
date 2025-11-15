@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run lint:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nEnhance 50-year mortgage calculator with user-focused improvements\n\n**Major Changes:**\n\nP0 (Critical - User Core Needs):\n- Add prominent product availability notice: 50-year mortgages are currently not available in the U.S. market\n- Implement side-by-side 30-year vs 50-year mortgage comparison with key metrics (monthly payment, PITI, total interest)\n- Integrate Fortune/UBS analysis data ($119/month savings, interest doubling) with expert perspectives\n- Add equity accumulation comparison table showing wealth-building differences over 30 years\n\nP1 (Important - Enhanced Experience):\n- Add \"Real Alternatives\" section with 6 actionable mortgage options:\n  - 40-year mortgages\n  - FHA loans (3.5% down)\n  - ARM loans (5/1, 7/1, 10/1)\n  - Biweekly payment plans\n  - Rate/term refinancing\n  - Root cause solutions (income increase, credit improvement)\n\n**Content Integration:**\n- Balanced expert commentary from Fortune, NPR, Bloomberg, and Wolf Street\n- Educational focus: help users understand the financial trade-offs\n- Link to original Fortune article for deeper analysis\n- Clear risk/benefit analysis for each option\n\n**UX Improvements:**\n- Redesigned calculator to automatically compute both 30 and 50 year scenarios\n- Enhanced visual hierarchy with color-coded comparison sections\n- Added \"breakeven analysis\" metric (months to break even)\n- Improved mobile responsiveness for all new sections\n\n**Alignment with User Intent:**\n- Primary goal: Users want to verify the $119/month savings claim (NOW ANSWERED)\n- Secondary goal: Users want to know if 50-year mortgages are real (NOW CLEAR: Not yet available)\n- Tertiary goal: Users want realistic alternatives (NOW PROVIDED: 6 options)\n\nThis update transforms the calculator from pure speculation into an educational tool that respects user intelligence and provides actionable guidance.\n\n🤖 Generated with Claude Code\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git config:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nEnhance 50-year mortgage calculator with user-focused improvements\n\n**Major Changes:**\n\nP0 (Critical - User Core Needs):\n- Add prominent product availability notice: 50-year mortgages are currently not available in the U.S. market\n- Implement side-by-side 30-year vs 50-year mortgage comparison with key metrics\n- Integrate Fortune/UBS analysis data with expert perspectives from multiple sources\n- Add equity accumulation comparison table showing wealth-building differences\n\nP1 (Important - Enhanced Experience):\n- Add \"Real Alternatives\" section with 6 actionable mortgage options\n- Include 40-year mortgages, FHA loans, ARM loans, biweekly payments, refinancing, and root cause solutions\n\n**Content Integration:**\n- Balanced expert commentary from Fortune, NPR, Bloomberg, and Wolf Street\n- Educational focus on financial trade-offs\n- Link to original Fortune article for deeper analysis\n\n**UX Improvements:**\n- Calculator now automatically shows both 30 and 50 year scenarios\n- Enhanced visual comparison with color-coded sections\n- Added breakeven analysis metric\n- Improved mobile responsiveness\n\n🤖 Generated with Claude Code\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git commit:*)",
+      "Bash(npm run build:*)",
+      "Bash(cat:*)",
+      "Bash(echo:*)",
+      "Bash(npm install:*)",
+      "Bash(timeout 15 npm run dev:*)",
+      "Bash(git push:*)",
+      "Bash(git remote:*)",
+      "Bash(tree:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

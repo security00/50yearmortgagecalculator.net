@@ -10,6 +10,38 @@ interface ComparisonResult {
   totalInterest: number;
 }
 
+interface ComparisonPreset {
+  id: string;
+  label: string;
+  homePrice: string;
+  downPayment: string;
+  interestRate: string;
+}
+
+const comparisonPresets: ComparisonPreset[] = [
+  {
+    id: 'starter',
+    label: 'Starter home (5% down)',
+    homePrice: '300000',
+    downPayment: '15000',
+    interestRate: '6.5',
+  },
+  {
+    id: 'move-up',
+    label: 'Move-up buyer (20% down)',
+    homePrice: '450000',
+    downPayment: '90000',
+    interestRate: '6.5',
+  },
+  {
+    id: 'high-cost',
+    label: 'High-cost market (10% down, 7.2%)',
+    homePrice: '650000',
+    downPayment: '65000',
+    interestRate: '7.2',
+  },
+];
+
 export default function ComparisonTool() {
   const [homePrice, setHomePrice] = useState<string>('300000');
   const [downPayment, setDownPayment] = useState<string>('60000');
@@ -81,6 +113,10 @@ export default function ComparisonTool() {
     }).format(value);
   };
 
+  const price = parseFloat(homePrice) || 0;
+  const down = parseFloat(downPayment) || 0;
+  const principal = price - down;
+
   const result30 = results.find((r) => r.term === 30);
   const result50 = results.find((r) => r.term === 50);
 
@@ -92,6 +128,29 @@ export default function ComparisonTool() {
       {/* Input Section */}
       <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 mb-8">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">Comparison Parameters</h2>
+
+        {/* Preset scenarios */}
+        <div className="mb-6">
+          <p className="text-sm text-gray-600 mb-2">
+            Quickly load a common scenario:
+          </p>
+          <div className="flex flex-wrap gap-3">
+            {comparisonPresets.map((preset) => (
+              <button
+                key={preset.id}
+                type="button"
+                onClick={() => {
+                  setHomePrice(preset.homePrice);
+                  setDownPayment(preset.downPayment);
+                  setInterestRate(preset.interestRate);
+                }}
+                className="px-3 py-1.5 rounded-full border border-gray-200 bg-gray-50 text-xs font-semibold text-gray-800 hover:bg-purple-50 hover:border-purple-200 hover:text-purple-700 transition-colors"
+              >
+                {preset.label}
+              </button>
+            ))}
+          </div>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
@@ -245,6 +304,58 @@ export default function ComparisonTool() {
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* Summary table */}
+      <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 mb-8">
+        <h3 className="text-xl font-bold text-gray-900 mb-4">Term Comparison Summary</h3>
+        <p className="text-sm text-gray-600 mb-4">
+          Compare monthly payments and total costs for each term based on your inputs above.
+        </p>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b-2 border-gray-200 bg-gray-50">
+                <th className="text-left py-3 px-4 font-bold text-gray-900">Term</th>
+                <th className="text-right py-3 px-4 font-bold text-gray-900">Monthly Payment</th>
+                <th className="text-right py-3 px-4 font-bold text-gray-900">Total Paid</th>
+                <th className="text-right py-3 px-4 font-bold text-gray-900">Total Interest</th>
+                <th className="text-right py-3 px-4 font-bold text-gray-900">Interest vs 30-Year</th>
+              </tr>
+            </thead>
+            <tbody>
+              {results.map((result) => {
+                const interestDiff =
+                  result30 && result.term !== 30
+                    ? result.totalInterest - result30.totalInterest
+                    : 0;
+
+                return (
+                  <tr key={result.term} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                    <td className="py-3 px-4 text-gray-900 font-medium">{result.term}-Year</td>
+                    <td className="py-3 px-4 text-right text-gray-900 font-semibold">
+                      {formatCurrency(result.monthlyPayment)}
+                    </td>
+                    <td className="py-3 px-4 text-right text-gray-700">
+                      {formatCurrency(result.totalPayment)}
+                    </td>
+                    <td className="py-3 px-4 text-right text-gray-700">
+                      {formatCurrency(result.totalInterest)}
+                    </td>
+                    <td className="py-3 px-4 text-right text-orange-600 font-semibold">
+                      {result.term === 30 ? 'Baseline' : formatCurrency(interestDiff)}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        {principal > 0 && (
+          <p className="mt-3 text-xs text-gray-500">
+            Principal assumed: {formatCurrency(principal)} (home price minus down payment).
+          </p>
+        )}
       </div>
 
       {/* Detailed Insights Section */}

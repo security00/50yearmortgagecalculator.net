@@ -2,23 +2,50 @@
 
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
-import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import type { CalculationResult, AmortizationRow, PresetScenario } from './mortgageTypes';
+import { MortgageInputs } from './MortgageInputs';
+import { MortgageResults } from './MortgageResults';
+import { MortgageBreakdown } from './MortgageBreakdown';
+import { MortgageAmortization } from './MortgageAmortization';
 
-interface CalculationResult {
-  monthlyPayment: number; // P&I only
-  totalPayment: number;
-  totalInterest: number;
-  principalAmount: number;
-  pitiMonthly: number; // Estimated PITI
-}
-
-interface AmortizationRow {
-  month: number;
-  payment: number;
-  principal: number;
-  interest: number;
-  balance: number;
-}
+const presetScenarios: PresetScenario[] = [
+  {
+    id: 'first-time',
+    label: 'First-time buyer (5% down)',
+    homePrice: '300000',
+    downPayment: '15000',
+    interestRate: '6.5',
+    propertyTaxRate: '1.2',
+    homeInsuranceAnnual: '1200',
+    hoaMonthly: '0',
+    pmiRate: '0.8',
+    closingCosts: '7000',
+  },
+  {
+    id: 'move-up',
+    label: 'Move-up buyer (20% down)',
+    homePrice: '450000',
+    downPayment: '90000',
+    interestRate: '6.5',
+    propertyTaxRate: '1.3',
+    homeInsuranceAnnual: '1500',
+    hoaMonthly: '50',
+    pmiRate: '0.5',
+    closingCosts: '9000',
+  },
+  {
+    id: 'high-cost',
+    label: 'High-cost market (10% down)',
+    homePrice: '650000',
+    downPayment: '65000',
+    interestRate: '7.2',
+    propertyTaxRate: '1.7',
+    homeInsuranceAnnual: '2000',
+    hoaMonthly: '150',
+    pmiRate: '1.0',
+    closingCosts: '12000',
+  },
+];
 
 export default function MortgageCalculator() {
   const [homePrice, setHomePrice] = useState<string>('300000');
@@ -29,9 +56,11 @@ export default function MortgageCalculator() {
   const [propertyTaxRate, setPropertyTaxRate] = useState<string>('1.2'); // %/yr
   const [homeInsuranceAnnual, setHomeInsuranceAnnual] = useState<string>('1200'); // $/yr
   const [hoaMonthly, setHoaMonthly] = useState<string>('0'); // $/mo
+  const [pmiRate, setPmiRate] = useState<string>('0.5'); // %/yr, applied when LTV > 80%
+  const [closingCosts, setClosingCosts] = useState<string>('0'); // $ one-time
   const [result, setResult] = useState<CalculationResult | null>(null);
   const [amortization, setAmortization] = useState<AmortizationRow[]>([]);
-  const [showFullTable, setShowFullTable] = useState(false);
+  const [showAdvanced, setShowAdvanced] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -44,6 +73,8 @@ export default function MortgageCalculator() {
     if (get('tax')) setPropertyTaxRate(get('tax')!);
     if (get('ins')) setHomeInsuranceAnnual(get('ins')!);
     if (get('hoa')) setHoaMonthly(get('hoa')!);
+    if (get('pmi')) setPmiRate(get('pmi')!);
+    if (get('close')) setClosingCosts(get('close')!);
   }, []);
 
   // Persist state to URL (shareable link)
@@ -56,19 +87,29 @@ export default function MortgageCalculator() {
     if (propertyTaxRate) params.set('tax', propertyTaxRate);
     if (homeInsuranceAnnual) params.set('ins', homeInsuranceAnnual);
     if (hoaMonthly) params.set('hoa', hoaMonthly);
+     if (pmiRate) params.set('pmi', pmiRate);
+     if (closingCosts) params.set('close', closingCosts);
     const url = `${pathname}?${params.toString()}`;
     window.history.replaceState(null, '', url);
-  }, [homePrice, downPayment, interestRate, propertyTaxRate, homeInsuranceAnnual, hoaMonthly, pathname]);
+  }, [homePrice, downPayment, interestRate, propertyTaxRate, homeInsuranceAnnual, hoaMonthly, pmiRate, closingCosts, pathname]);
 
   const calculateMortgage = () => {
     const price = parseFloat(homePrice) || 0;
     const down = parseFloat(downPayment) || 0;
     const rate = parseFloat(interestRate) || 0;
+    const pmiPercent = parseFloat(pmiRate) || 0;
+    const closingCostsValue = parseFloat(closingCosts) || 0;
 
     if (price <= 0 || rate <= 0) return;
 
     const principal = price - down;
     const monthlyRate = rate / 100 / 12;
+    const ltv = principal > 0 && price > 0 ? principal / price : 0;
+    let pmiMonthly = 0;
+    if (pmiPercent > 0 && ltv > 0.8) {
+      const annualPmi = (pmiPercent / 100) * principal;
+      pmiMonthly = annualPmi / 12;
+    }
 
     // Calculate for 30 years
     {
@@ -85,7 +126,7 @@ export default function MortgageCalculator() {
       const taxMonthly = ((parseFloat(propertyTaxRate) || 0) / 100) * price / 12;
       const insuranceMonthly = (parseFloat(homeInsuranceAnnual) || 0) / 12;
       const hoa = parseFloat(hoaMonthly) || 0;
-      const pitiMonthly = monthlyPayment + taxMonthly + insuranceMonthly + hoa;
+      const pitiMonthly = monthlyPayment + taxMonthly + insuranceMonthly + hoa + pmiMonthly;
 
       setResult30({
         monthlyPayment,
@@ -93,6 +134,9 @@ export default function MortgageCalculator() {
         totalInterest,
         principalAmount: principal,
         pitiMonthly,
+        pmiMonthly,
+        closingCosts: closingCostsValue,
+        totalCostWithClosing: totalPayment + closingCostsValue,
       });
 
       // Generate amortization schedule
@@ -131,7 +175,7 @@ export default function MortgageCalculator() {
       const taxMonthly = ((parseFloat(propertyTaxRate) || 0) / 100) * price / 12;
       const insuranceMonthly = (parseFloat(homeInsuranceAnnual) || 0) / 12;
       const hoa = parseFloat(hoaMonthly) || 0;
-      const pitiMonthly = monthlyPayment + taxMonthly + insuranceMonthly + hoa;
+      const pitiMonthly = monthlyPayment + taxMonthly + insuranceMonthly + hoa + pmiMonthly;
 
       setResult50({
         monthlyPayment,
@@ -139,6 +183,9 @@ export default function MortgageCalculator() {
         totalInterest,
         principalAmount: principal,
         pitiMonthly,
+        pmiMonthly,
+        closingCosts: closingCostsValue,
+        totalCostWithClosing: totalPayment + closingCostsValue,
       });
     }
 
@@ -147,7 +194,7 @@ export default function MortgageCalculator() {
 
   useEffect(() => {
     calculateMortgage();
-  }, [homePrice, downPayment, interestRate, propertyTaxRate, homeInsuranceAnnual, hoaMonthly]);
+  }, [homePrice, downPayment, interestRate, propertyTaxRate, homeInsuranceAnnual, hoaMonthly, pmiRate, closingCosts]);
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -167,613 +214,83 @@ export default function MortgageCalculator() {
     }).format(value);
   };
 
-  // Generate year-by-year summary data
-  const generateYearSummary = () => {
-    const summary = [];
-    for (let year = 1; year <= 30; year++) {
-      const monthStart = (year - 1) * 12 + 1;
-      const monthEnd = year * 12;
-      const yearData = amortization.slice(monthStart - 1, monthEnd);
-
-      if (yearData.length > 0) {
-        const yearPrincipal = yearData.reduce((sum, row) => sum + row.principal, 0);
-        const yearInterest = yearData.reduce((sum, row) => sum + row.interest, 0);
-        const endBalance = yearData[yearData.length - 1]?.balance || 0;
-
-        summary.push({
-          year,
-          principal: Math.round(yearPrincipal),
-          interest: Math.round(yearInterest),
-          balance: Math.round(endBalance),
-          principalDisplay: formatCurrency(yearPrincipal),
-          interestDisplay: formatCurrency(yearInterest),
-          balanceDisplay: formatCurrency(endBalance),
-        });
-      }
-    }
-    return summary;
-  };
-
-  // Generate chart data (every 6 months for line chart)
-  const generateChartData = () => {
-    return amortization
-      .filter((row) => row.month % 6 === 0)
-      .map((row) => ({
-        month: row.month,
-        monthLabel: `Month ${row.month}`,
-        year: Math.ceil(row.month / 12),
-        balance: Math.round(row.balance),
-        principal: Math.round(row.principal),
-        interest: Math.round(row.interest),
-      }));
-  };
-
-  // Generate cumulative chart data
-  const generateCumulativeData = () => {
-    let cumulativePrincipal = 0;
-    let cumulativeInterest = 0;
-
-    return amortization
-      .filter((row) => row.month % 12 === 0)
-      .map((row) => {
-        cumulativePrincipal += row.principal;
-        cumulativeInterest += row.interest;
-        return {
-          month: row.month,
-          year: row.month / 12,
-          cumulativePrincipal: Math.round(cumulativePrincipal),
-          cumulativeInterest: Math.round(cumulativeInterest),
-          balance: Math.round(row.balance),
-        };
-      });
-  };
-
-  const copyShareLink = async () => {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      alert('Shareable link copied!');
-    } catch {}
-  };
-
-  const exportCSV = () => {
-    const header = ['Month', 'Payment', 'Principal', 'Interest', 'Balance'];
-    const rows = amortization.map((r) => [
-      r.month,
-      r.payment.toFixed(2),
-      r.principal.toFixed(2),
-      r.interest.toFixed(2),
-      r.balance.toFixed(2),
-    ]);
-    const csv = [header, ...rows].map((r) => r.join(',')).join('\n');
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `amortization_30yr_${homePrice}.csv`;
-    a.click();
-    URL.revokeObjectURL(a.href);
-  };
-
   const downPaymentPercent = ((parseFloat(downPayment) / parseFloat(homePrice)) * 100).toFixed(1);
 
-  const displayedRows = showFullTable ? amortization : amortization.slice(0, 12);
+  const priceForBreakdown = parseFloat(homePrice) || 0;
+  const taxMonthly = ((parseFloat(propertyTaxRate) || 0) / 100) * priceForBreakdown / 12;
+  const insuranceMonthlyBreakdown = (parseFloat(homeInsuranceAnnual) || 0) / 12;
+  const hoaMonthlyBreakdown = parseFloat(hoaMonthly) || 0;
+  const pmiMonthlyBreakdown = result30?.pmiMonthly ?? 0;
 
   return (
     <div className="w-full max-w-7xl mx-auto">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Input Section */}
-        <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Loan Details</h2>
-
-          <div className="space-y-6">
-            {/* Home Price */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Home Price
-              </label>
-              <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">$</span>
-                <input
-                  type="number"
-                  value={homePrice}
-                  onChange={(e) => setHomePrice(e.target.value)}
-                  className="w-full pl-8 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none text-lg font-medium"
-                  placeholder="300000"
-                />
-              </div>
-            </div>
-
-            {/* Down Payment */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Down Payment ({downPaymentPercent}%)
-              </label>
-              <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">$</span>
-                <input
-                  type="number"
-                  value={downPayment}
-                  onChange={(e) => setDownPayment(e.target.value)}
-                  className="w-full pl-8 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none text-lg font-medium"
-                  placeholder="60000"
-                />
-              </div>
-            </div>
-
-            {/* Interest Rate */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Interest Rate
-              </label>
-              <div className="relative">
-                <input
-                  type="number"
-                  step="0.1"
-                  value={interestRate}
-                  onChange={(e) => setInterestRate(e.target.value)}
-                  className="w-full pl-4 pr-8 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none text-lg font-medium"
-                  placeholder="6.5"
-                />
-                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">%</span>
-              </div>
-            </div>
-
-            {/* Loan Term - Informational only now */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Comparison
-              </label>
-              <div className="flex gap-3">
-                <div className="flex-1 py-3 px-4 rounded-xl font-semibold bg-blue-100 text-blue-800 text-center">
-                  30 Years
-                </div>
-                <div className="flex items-center justify-center text-gray-600">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
-                  </svg>
-                </div>
-                <div className="flex-1 py-3 px-4 rounded-xl font-semibold bg-purple-100 text-purple-800 text-center">
-                  50 Years
-                </div>
-              </div>
-              <p className="text-xs text-gray-600 mt-2">This calculator always shows both terms for comparison</p>
-            </div>
-
-            {/* Property Tax (%/yr) */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Property Tax Rate (annual)</label>
-              <div className="relative">
-                <input
-                  type="number"
-                  step="0.01"
-                  value={propertyTaxRate}
-                  onChange={(e) => setPropertyTaxRate(e.target.value)}
-                  className="w-full pl-4 pr-8 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none text-lg font-medium"
-                  placeholder="1.2"
-                />
-                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">%</span>
-              </div>
-            </div>
-
-            {/* Homeowners Insurance ($/yr) */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Homeowners Insurance (annual)</label>
-              <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">$</span>
-                <input
-                  type="number"
-                  value={homeInsuranceAnnual}
-                  onChange={(e) => setHomeInsuranceAnnual(e.target.value)}
-                  className="w-full pl-8 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none text-lg font-medium"
-                  placeholder="1200"
-                />
-              </div>
-            </div>
-
-            {/* HOA ($/mo) */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">HOA Fees (monthly)</label>
-              <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-medium">$</span>
-                <input
-                  type="number"
-                  value={hoaMonthly}
-                  onChange={(e) => setHoaMonthly(e.target.value)}
-                  className="w-full pl-8 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none text-lg font-medium"
-                  placeholder="0"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
+        <MortgageInputs
+          homePrice={homePrice}
+          downPayment={downPayment}
+          interestRate={interestRate}
+          propertyTaxRate={propertyTaxRate}
+          homeInsuranceAnnual={homeInsuranceAnnual}
+          hoaMonthly={hoaMonthly}
+          pmiRate={pmiRate}
+          closingCosts={closingCosts}
+          downPaymentPercent={downPaymentPercent}
+          showAdvanced={showAdvanced}
+          presetScenarios={presetScenarios}
+          onHomePriceChange={setHomePrice}
+          onDownPaymentChange={setDownPayment}
+          onInterestRateChange={setInterestRate}
+          onPropertyTaxRateChange={setPropertyTaxRate}
+          onHomeInsuranceAnnualChange={setHomeInsuranceAnnual}
+          onHoaMonthlyChange={setHoaMonthly}
+          onPmiRateChange={setPmiRate}
+          onClosingCostsChange={setClosingCosts}
+          onToggleAdvanced={() => setShowAdvanced((prev) => !prev)}
+          onApplyPreset={(scenario) => {
+            setHomePrice(scenario.homePrice);
+            setDownPayment(scenario.downPayment);
+            setInterestRate(scenario.interestRate);
+            setPropertyTaxRate(scenario.propertyTaxRate);
+            setHomeInsuranceAnnual(scenario.homeInsuranceAnnual);
+            setHoaMonthly(scenario.hoaMonthly);
+            setPmiRate(scenario.pmiRate);
+            setClosingCosts(scenario.closingCosts);
+            setShowAdvanced(true);
+          }}
+        />
 
         {/* Results Section */}
-        <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
-          <h2 className="text-2xl font-bold text-gray-900 mb-8">Comparison: 30-Year vs 50-Year Mortgage</h2>
-
-          {result30 && result50 && (
-            <div className="space-y-8">
-              {/* Key Metrics Comparison */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* 30-Year Column */}
-                <div className="border-2 border-blue-200 rounded-2xl p-6 bg-blue-50">
-                  <h3 className="text-lg font-bold text-blue-900 mb-6">30-Year Mortgage</h3>
-
-                  <div className="space-y-4">
-                    <div className="bg-white rounded-lg p-4">
-                      <div className="text-sm text-gray-600 mb-1">Monthly Payment (P&I)</div>
-                      <div className="text-3xl font-bold text-gray-900">{formatCurrency(result30.monthlyPayment)}</div>
-                    </div>
-
-                    <div className="bg-white rounded-lg p-4">
-                      <div className="text-sm text-gray-600 mb-1">Monthly (PITI Estimate)</div>
-                      <div className="text-2xl font-bold text-gray-900">{formatCurrency(result30.pitiMonthly)}</div>
-                    </div>
-
-                    <div className="bg-white rounded-lg p-4">
-                      <div className="text-sm text-gray-600 mb-1">Total Interest</div>
-                      <div className="text-xl font-bold text-gray-900">{formatCurrency(result30.totalInterest)}</div>
-                    </div>
-
-                    <div className="bg-white rounded-lg p-4">
-                      <div className="text-sm text-gray-600 mb-1">Total Amount Paid</div>
-                      <div className="text-xl font-bold text-gray-900">{formatCurrency(result30.totalPayment)}</div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* 50-Year Column */}
-                <div className="border-2 border-purple-200 rounded-2xl p-6 bg-purple-50">
-                  <h3 className="text-lg font-bold text-purple-900 mb-6">50-Year Mortgage (Proposal)</h3>
-
-                  <div className="space-y-4">
-                    <div className="bg-white rounded-lg p-4">
-                      <div className="text-sm text-gray-600 mb-1">Monthly Payment (P&I)</div>
-                      <div className="text-3xl font-bold text-gray-900">{formatCurrency(result50.monthlyPayment)}</div>
-                    </div>
-
-                    <div className="bg-white rounded-lg p-4">
-                      <div className="text-sm text-gray-600 mb-1">Monthly (PITI Estimate)</div>
-                      <div className="text-2xl font-bold text-gray-900">{formatCurrency(result50.pitiMonthly)}</div>
-                    </div>
-
-                    <div className="bg-white rounded-lg p-4">
-                      <div className="text-sm text-gray-600 mb-1">Total Interest</div>
-                      <div className="text-xl font-bold text-orange-600">{formatCurrency(result50.totalInterest)}</div>
-                    </div>
-
-                    <div className="bg-white rounded-lg p-4">
-                      <div className="text-sm text-gray-600 mb-1">Total Amount Paid</div>
-                      <div className="text-xl font-bold text-gray-900">{formatCurrency(result50.totalPayment)}</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Savings vs Extra Cost Analysis */}
-              <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-6 text-white">
-                <h3 className="text-lg font-bold mb-6">50-Year vs 30-Year Impact</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div>
-                    <div className="text-sm text-blue-100 mb-2">Monthly Savings</div>
-                    <div className="text-3xl font-bold">{formatCurrency(result30.monthlyPayment - result50.monthlyPayment)}</div>
-                    <div className="text-xs text-blue-100 mt-1">per month</div>
-                  </div>
-
-                  <div>
-                    <div className="text-sm text-blue-100 mb-2">Extra Interest Cost</div>
-                    <div className="text-3xl font-bold text-orange-300">{formatCurrency(result50.totalInterest - result30.totalInterest)}</div>
-                    <div className="text-xs text-blue-100 mt-1">over loan lifetime</div>
-                  </div>
-
-                  <div>
-                    <div className="text-sm text-blue-100 mb-2">Breakeven Analysis</div>
-                    <div className="text-3xl font-bold">
-                      {Math.round((result50.totalInterest - result30.totalInterest) / (result30.monthlyPayment - result50.monthlyPayment))}
-                    </div>
-                    <div className="text-xs text-blue-100 mt-1">months to break even</div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Key Insight */}
-              <div className="bg-yellow-50 border-2 border-yellow-300 rounded-xl p-6">
-                <p className="text-gray-800 text-center font-semibold">
-                  💡 <strong>Key Insight:</strong> You'll save <span className="text-blue-600">${(result30.monthlyPayment - result50.monthlyPayment).toFixed(0)}/month</span> with a 50-year mortgage,
-                  but pay an additional <span className="text-orange-600">${(result50.totalInterest - result30.totalInterest).toLocaleString('en-US', {maximumFractionDigits: 0})}</span> in interest.
-                  Is that trade-off worth it for your situation?
-                </p>
-              </div>
-            </div>
-          )}
-        </div>
+        <MortgageResults
+          result30={result30}
+          result50={result50}
+          formatCurrency={formatCurrency}
+          formatCurrencyDetailed={formatCurrencyDetailed}
+        />
       </div>
 
+      {/* Detailed payment & equity breakdown */}
+      <MortgageBreakdown
+        homePrice={homePrice}
+        downPayment={downPayment}
+        interestRate={interestRate}
+        result30={result30}
+        result50={result50}
+        taxMonthly={taxMonthly}
+        insuranceMonthlyBreakdown={insuranceMonthlyBreakdown}
+        hoaMonthlyBreakdown={hoaMonthlyBreakdown}
+        pmiMonthlyBreakdown={pmiMonthlyBreakdown}
+        formatCurrency={formatCurrency}
+        formatCurrencyDetailed={formatCurrencyDetailed}
+      />
+
       {/* Amortization Visualization Section */}
-      {amortization.length > 0 && (
-        <div className="mt-8 bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-1">Amortization Schedule (30-Year)</h2>
-              <p className="text-sm text-gray-600">Visual breakdown of your mortgage payments over time</p>
-            </div>
-            <div className="flex gap-3">
-              <button
-                onClick={copyShareLink}
-                className="px-4 py-2 rounded-lg bg-blue-50 text-blue-600 font-semibold hover:bg-blue-100 border border-blue-200 transition-colors flex items-center gap-2"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                </svg>
-                Share
-              </button>
-              <button
-                onClick={exportCSV}
-                className="px-4 py-2 rounded-lg bg-gray-50 text-gray-700 font-semibold hover:bg-gray-100 border border-gray-200 transition-colors flex items-center gap-2"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                CSV
-              </button>
-            </div>
-          </div>
-
-          {/* Charts Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-            {/* Loan Balance Over Time */}
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Loan Balance Over Time</h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={generateChartData()}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                  <XAxis
-                    dataKey="year"
-                    label={{ value: 'Year', position: 'insideBottomRight', offset: -5 }}
-                    stroke="#6b7280"
-                  />
-                  <YAxis
-                    label={{ value: 'Balance ($)', angle: -90, position: 'insideLeft' }}
-                    stroke="#6b7280"
-                    tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
-                  />
-                  <Tooltip
-                    formatter={(value: number) => formatCurrency(value)}
-                    labelFormatter={(label) => `Year ${label}`}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="balance"
-                    stroke="#3b82f6"
-                    strokeWidth={3}
-                    dot={{ fill: '#3b82f6', r: 4 }}
-                    activeDot={{ r: 6 }}
-                    isAnimationActive={true}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-              <p className="text-xs text-gray-600 mt-3">Shows remaining loan balance at 6-month intervals</p>
-            </div>
-
-            {/* Principal vs Interest Cumulative */}
-            <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Cumulative Principal & Interest</h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <AreaChart data={generateCumulativeData()}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                  <XAxis
-                    dataKey="year"
-                    label={{ value: 'Year', position: 'insideBottomRight', offset: -5 }}
-                    stroke="#6b7280"
-                  />
-                  <YAxis
-                    label={{ value: 'Amount ($)', angle: -90, position: 'insideLeft' }}
-                    stroke="#6b7280"
-                    tickFormatter={(value) => `$${(value / 1000).toFixed(0)}k`}
-                  />
-                  <Tooltip
-                    formatter={(value: number) => formatCurrency(value)}
-                    labelFormatter={(label) => `Year ${label}`}
-                  />
-                  <Legend
-                    verticalAlign="top"
-                    height={36}
-                    wrapperStyle={{ paddingBottom: '10px' }}
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="cumulativePrincipal"
-                    stackId="1"
-                    stroke="#10b981"
-                    fill="#d1fae5"
-                    name="Principal Paid"
-                    isAnimationActive={true}
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="cumulativeInterest"
-                    stackId="1"
-                    stroke="#f97316"
-                    fill="#fed7aa"
-                    name="Interest Paid"
-                    isAnimationActive={true}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-              <p className="text-xs text-gray-600 mt-3">Shows cumulative principal and interest payments by year</p>
-            </div>
-          </div>
-
-          {/* Year-by-Year Summary Table */}
-          <div className="mb-8">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Year-by-Year Summary</h3>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="bg-gradient-to-r from-purple-50 to-pink-50 border-b-2 border-purple-200">
-                    <th className="text-left py-3 px-4 font-bold text-gray-900">Year</th>
-                    <th className="text-right py-3 px-4 font-bold text-green-700">Principal Paid</th>
-                    <th className="text-right py-3 px-4 font-bold text-orange-700">Interest Paid</th>
-                    <th className="text-right py-3 px-4 font-bold text-blue-700">Remaining Balance</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {generateYearSummary().map((yearData, index) => (
-                    <tr
-                      key={yearData.year}
-                      className={`border-b border-gray-100 hover:bg-purple-50 transition-colors ${
-                        index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'
-                      }`}
-                    >
-                      <td className="py-3 px-4 font-semibold text-gray-900">Year {yearData.year}</td>
-                      <td className="text-right py-3 px-4">
-                        <span className="text-green-700 font-semibold">{yearData.principalDisplay}</span>
-                      </td>
-                      <td className="text-right py-3 px-4">
-                        <span className="text-orange-700 font-semibold">{yearData.interestDisplay}</span>
-                      </td>
-                      <td className="text-right py-3 px-4">
-                        <span className="text-blue-700 font-bold">{yearData.balanceDisplay}</span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* Tabs for detailed views */}
-          <div className="border-t border-gray-200 pt-8">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Monthly Payment Breakdown</h3>
-            <p className="text-sm text-gray-600 mb-4">Detailed month-by-month payment schedule (showing first 12 months)</p>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b-2 border-blue-200">
-                    <th className="text-left py-4 px-4 font-bold text-gray-900 rounded-tl-lg">Month</th>
-                    <th className="text-right py-4 px-4 font-bold text-gray-900">Payment</th>
-                    <th className="text-right py-4 px-4 font-bold text-green-700">
-                      <div className="flex items-center justify-end gap-1">
-                        <span>Principal</span>
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                        </svg>
-                      </div>
-                    </th>
-                    <th className="text-right py-4 px-4 font-bold text-orange-700">
-                      <div className="flex items-center justify-end gap-1">
-                        <span>Interest</span>
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
-                        </svg>
-                      </div>
-                    </th>
-                    <th className="text-right py-4 px-4 font-bold text-gray-900 rounded-tr-lg">Balance</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {displayedRows.map((row, index) => {
-                    const principalPercent = (row.principal / row.payment) * 100;
-                    const interestPercent = (row.interest / row.payment) * 100;
-                    const isYearEnd = row.month % 12 === 0;
-
-                    return (
-                      <tr
-                        key={row.month}
-                        className={`border-b border-gray-100 hover:bg-blue-50 transition-colors ${
-                          isYearEnd ? 'bg-blue-50/50 font-semibold' : ''
-                        }`}
-                      >
-                        <td className="py-4 px-4">
-                          <div className="flex items-center gap-2">
-                            <span className={`${isYearEnd ? 'text-blue-700 font-bold' : 'text-gray-900 font-medium'}`}>
-                              {row.month}
-                            </span>
-                            {isYearEnd && (
-                              <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-bold rounded">
-                                Year {row.month / 12}
-                              </span>
-                            )}
-                          </div>
-                        </td>
-                        <td className="py-4 px-4 text-right text-gray-900 font-medium">
-                          {formatCurrencyDetailed(row.payment)}
-                        </td>
-                        <td className="py-4 px-4 text-right">
-                          <div className="flex flex-col items-end gap-1">
-                            <span className="text-green-700 font-semibold">{formatCurrencyDetailed(row.principal)}</span>
-                            <div className="w-full max-w-[100px] bg-gray-200 rounded-full h-1.5">
-                              <div
-                                className="bg-green-500 h-1.5 rounded-full transition-all"
-                                style={{ width: `${principalPercent}%` }}
-                              />
-                            </div>
-                          </div>
-                        </td>
-                        <td className="py-4 px-4 text-right">
-                          <div className="flex flex-col items-end gap-1">
-                            <span className="text-orange-700 font-semibold">{formatCurrencyDetailed(row.interest)}</span>
-                            <div className="w-full max-w-[100px] bg-gray-200 rounded-full h-1.5">
-                              <div
-                                className="bg-orange-500 h-1.5 rounded-full transition-all"
-                                style={{ width: `${interestPercent}%` }}
-                              />
-                            </div>
-                          </div>
-                        </td>
-                        <td className="py-4 px-4 text-right">
-                          <span className="text-gray-900 font-bold">{formatCurrency(row.balance)}</span>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Legend */}
-            <div className="mt-6 p-4 bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl border border-gray-200">
-              <div className="flex flex-wrap items-center justify-center gap-6 text-sm">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                  <span className="text-gray-700"><strong className="text-green-700">Principal:</strong> Reduces loan balance</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
-                  <span className="text-gray-700"><strong className="text-orange-700">Interest:</strong> Cost of borrowing</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                  <span className="text-gray-700"><strong className="text-blue-700">Year markers:</strong> Annual milestones</span>
-                </div>
-              </div>
-            </div>
-
-            {!showFullTable && amortization.length > 12 && (
-              <button
-                onClick={() => setShowFullTable(true)}
-                className="mt-6 w-full py-3 bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 font-bold rounded-xl hover:from-blue-100 hover:to-indigo-100 transition-all border-2 border-blue-200 flex items-center justify-center gap-2"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-                Show Full Schedule ({amortization.length} months / {amortization.length / 12} years)
-              </button>
-            )}
-
-            {showFullTable && (
-              <button
-                onClick={() => setShowFullTable(false)}
-                className="mt-6 w-full py-3 bg-gray-50 text-gray-700 font-semibold rounded-xl hover:bg-gray-100 transition-colors border border-gray-200 flex items-center justify-center gap-2"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-                </svg>
-                Show Less
-              </button>
-            )}
-          </div>
-        </div>
-      )}
+      <MortgageAmortization
+        amortization={amortization}
+        homePrice={homePrice}
+        formatCurrency={formatCurrency}
+        formatCurrencyDetailed={formatCurrencyDetailed}
+      />
     </div>
   );
 }

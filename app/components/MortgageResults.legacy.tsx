@@ -1,0 +1,334 @@
+'use client';
+
+import type { CalculationResult } from './mortgageTypes';
+
+interface MortgageResultsProps {
+  result30: CalculationResult | null;
+  result50: CalculationResult | null;
+  formatCurrency: (value: number) => string;
+  formatCurrencyDetailed: (value: number) => string;
+}
+
+export function MortgageResults({
+  result30,
+  result50,
+  formatCurrency,
+  formatCurrencyDetailed,
+}: MortgageResultsProps) {
+  if (!result30 || !result50) {
+    return (
+      <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+        <h2 className="text-2xl font-bold text-gray-900 mb-4">Comparison: 30-Year vs 50-Year Mortgage</h2>
+        <p className="text-gray-600 text-sm">
+          Enter your loan details to see how a traditional 30-year mortgage compares to a 50-year option.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+      <h2 className="text-2xl font-bold text-gray-900 mb-8">Comparison: 30-Year vs 50-Year Mortgage</h2>
+
+      <div className="space-y-8">
+          {/* Key Metrics Comparison */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* 30-Year Column */}
+            <div className="border-2 border-blue-200 rounded-2xl p-6 bg-blue-50">
+              <h3 className="text-lg font-bold text-blue-900 mb-6">30-Year Mortgage</h3>
+
+              <div className="space-y-4">
+                <div className="bg-white rounded-lg p-4">
+                  <div className="text-sm text-gray-600 mb-1">Monthly Payment (P&I)</div>
+                  <div className="text-3xl font-bold text-gray-900">{formatCurrency(result30.monthlyPayment)}</div>
+                </div>
+
+                <div className="bg-white rounded-lg p-4">
+                  <div className="text-sm text-gray-600 mb-1">Monthly (PITI Estimate)</div>
+                  <div className="text-2xl font-bold text-gray-900">{formatCurrency(result30.pitiMonthly)}</div>
+                </div>
+
+                {result30.pmiMonthly > 0 && (
+                  <div className="bg-white rounded-lg p-4">
+                    <div className="text-sm text-gray-600 mb-1">Monthly PMI (estimated)</div>
+                    <div className="text-xl font-bold text-gray-900">
+                    {formatCurrencyDetailed(result30.pmiMonthly)}
+                    </div>
+                  </div>
+                )}
+
+                <div className="bg-white rounded-lg p-4">
+                  <div className="text-sm text-gray-600 mb-1">Total Interest</div>
+                  <div className="text-xl font-bold text-gray-900">{formatCurrency(result30.totalInterest)}</div>
+                </div>
+
+                <div className="bg-white rounded-lg p-4">
+                  <div className="text-sm text-gray-600 mb-1">Total Amount Paid (excluding closing costs)</div>
+                  <div className="text-xl font-bold text-gray-900">{formatCurrency(result30.totalPayment)}</div>
+                </div>
+
+              {result30.closingCosts > 0 && (
+                  <>
+                    <div className="bg-white rounded-lg p-4">
+                      <div className="text-sm text-gray-600 mb-1">Closing Costs (upfront)</div>
+                      <div className="text-xl font-bold text-gray-900">{formatCurrency(result30.closingCosts)}</div>
+                    </div>
+                    <div className="bg-white rounded-lg p-4">
+                      <div className="text-sm text-gray-600 mb-1">Total Cost incl. Closing</div>
+                      <div className="text-xl font-bold text-gray-900">
+                        {formatCurrency(result30.totalCostWithClosing)}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* 50-Year Column */}
+            <div className="border-2 border-purple-200 rounded-2xl p-6 bg-purple-50">
+              <h3 className="text-lg font-bold text-purple-900 mb-6">50-Year Mortgage (Proposal)</h3>
+
+              <div className="space-y-4">
+                <div className="bg-white rounded-lg p-4">
+                  <div className="text-sm text-gray-600 mb-1">Monthly Payment (P&I)</div>
+                  <div className="text-3xl font-bold text-gray-900">{formatCurrency(result50.monthlyPayment)}</div>
+                </div>
+
+                <div className="bg-white rounded-lg p-4">
+                  <div className="text-sm text-gray-600 mb-1">Monthly (PITI Estimate)</div>
+                  <div className="text-2xl font-bold text-gray-900">{formatCurrency(result50.pitiMonthly)}</div>
+                </div>
+
+              {result50.pmiMonthly > 0 && (
+                  <div className="bg-white rounded-lg p-4">
+                    <div className="text-sm text-gray-600 mb-1">Monthly PMI (estimated)</div>
+                    <div className="text-xl font-bold text-gray-900">
+                      {formatCurrencyDetailed(result50.pmiMonthly)}
+                    </div>
+                  </div>
+                )}
+
+                <div className="bg-white rounded-lg p-4">
+                  <div className="text-sm text-gray-600 mb-1">Total Interest</div>
+                  <div className="text-xl font-bold text-orange-600">{formatCurrency(result50.totalInterest)}</div>
+                </div>
+
+                <div className="bg-white rounded-lg p-4">
+                  <div className="text-sm text-gray-600 mb-1">Total Amount Paid (excluding closing costs)</div>
+                  <div className="text-xl font-bold text-gray-900">{formatCurrency(result50.totalPayment)}</div>
+                </div>
+
+              {result50.closingCosts > 0 && (
+                  <>
+                    <div className="bg-white rounded-lg p-4">
+                      <div className="text-sm text-gray-600 mb-1">Closing Costs (upfront)</div>
+                      <div className="text-xl font-bold text-gray-900">{formatCurrency(result50.closingCosts)}</div>
+                    </div>
+                    <div className="bg-white rounded-lg p-4">
+                      <div className="text-sm text-gray-600 mb-1">Total Cost incl. Closing</div>
+                      <div className="text-xl font-bold text-gray-900">
+                        {formatCurrency(result50.totalCostWithClosing)}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+
+        {/* Savings vs Extra Cost Analysis */}
+        <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-6 text-white">
+            <h3 className="text-lg font-bold mb-6">50-Year vs 30-Year Impact</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div>
+                <div className="text-sm text-blue-100 mb-2">Monthly Savings</div>
+                <div className="text-3xl font-bold">
+                  {formatCurrency(result30.monthlyPayment - result50.monthlyPayment)}
+                </div>
+                <div className="text-xs text-blue-100 mt-1">per month</div>
+              </div>
+
+              <div>
+                <div className="text-sm text-blue-100 mb-2">Extra Interest Cost</div>
+                <div className="text-3xl font-bold text-orange-300">
+                  {formatCurrency(result50.totalInterest - result30.totalInterest)}
+                </div>
+                <div className="text-xs text-blue-100 mt-1">over loan lifetime</div>
+              </div>
+
+              <div>
+                <div className="text-sm text-blue-100 mb-2">Breakeven Analysis</div>
+                <div className="text-3xl font-bold">
+                  {Math.round(
+                    (result50.totalInterest - result30.totalInterest) /
+                      (result30.monthlyPayment - result50.monthlyPayment),
+                  )}
+                </div>
+                <div className="text-xs text-blue-100 mt-1">months to break even</div>
+              </div>
+            </div>
+          </div>
+
+        {/* Key Insight */}
+        <div className="bg-yellow-50 border-2 border-yellow-300 rounded-xl p-6">
+            <p className="text-gray-800 text-center font-semibold">
+              💡 <strong>Key Insight:</strong> You'll save{' '}
+              <span className="text-blue-600">
+                ${(
+                  result30.monthlyPayment - result50.monthlyPayment
+                ).toFixed(0)}
+                /month
+              </span>{' '}
+              with a 50-year mortgage, but pay an additional{' '}
+              <span className="text-orange-600">
+                $
+                {(
+                  result50.totalInterest - result30.totalInterest
+                ).toLocaleString('en-US', { maximumFractionDigits: 0 })}
+              </span>{' '}
+              in interest. Is that trade-off worth it for your situation?
+            </p>
+          </div>
+
+          {/* Detailed breakdown toggle + content */}
+          <div className="pt-2">
+            <button
+              type="button"
+              onClick={onToggleDetails}
+              className="w-full md:w-auto px-4 py-2 rounded-xl border border-gray-200 bg-gray-50 text-sm font-semibold text-gray-800 hover:bg-gray-100 transition-colors flex items-center justify-center gap-2"
+            >
+              <span>{showDetails ? 'Hide detailed breakdown' : 'Show detailed breakdown'}</span>
+              <svg
+                className={`w-4 h-4 transition-transform ${showDetails ? 'rotate-180' : ''}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            {showDetails && (
+              <div className="mt-6 space-y-6">
+                {/* Monthly PITI Breakdown */}
+                <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
+                  <h3 className="text-lg font-bold text-gray-900 mb-4">
+                    Monthly Payment Breakdown (Based on Your Inputs)
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Shows how each monthly payment is split between principal & interest and other housing costs.
+                  </p>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b-2 border-gray-200 bg-gray-50">
+                          <th className="text-left py-3 px-4 font-bold text-gray-900">Term</th>
+                          <th className="text-right py-3 px-4 font-bold text-gray-900">Principal &amp; Interest</th>
+                          <th className="text-right py-3 px-4 font-bold text-gray-900">Property Tax</th>
+                          <th className="text-right py-3 px-4 font-bold text-gray-900">Insurance</th>
+                          <th className="text-right py-3 px-4 font-bold text-gray-900">HOA</th>
+                          <th className="text-right py-3 px-4 font-bold text-gray-900">PMI</th>
+                          <th className="text-right py-3 px-4 font-bold text-blue-700">Total PITI</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr className="border-b border-gray-100 hover:bg-gray-50">
+                          <td className="py-3 px-4 font-semibold text-gray-900">30-Year</td>
+                          <td className="text-right py-3 px-4">
+                            {formatCurrencyDetailed(result30.monthlyPayment)}
+                          </td>
+                          <td className="text-right py-3 px-4">
+                            {formatCurrencyDetailed(taxMonthly)}
+                          </td>
+                          <td className="text-right py-3 px-4">
+                            {formatCurrencyDetailed(insuranceMonthlyBreakdown)}
+                          </td>
+                          <td className="text-right py-3 px-4">
+                            {formatCurrencyDetailed(hoaMonthlyBreakdown)}
+                          </td>
+                          <td className="text-right py-3 px-4">
+                            {pmiMonthlyBreakdown > 0
+                              ? formatCurrencyDetailed(pmiMonthlyBreakdown)
+                              : '$0.00'}
+                          </td>
+                          <td className="text-right py-3 px-4 font-bold text-blue-700">
+                            {formatCurrencyDetailed(result30.pitiMonthly)}
+                          </td>
+                        </tr>
+                        <tr className="hover:bg-gray-50">
+                          <td className="py-3 px-4 font-semibold text-gray-900">50-Year</td>
+                          <td className="text-right py-3 px-4">
+                            {formatCurrencyDetailed(result50.monthlyPayment)}
+                          </td>
+                          <td className="text-right py-3 px-4">
+                            {formatCurrencyDetailed(taxMonthly)}
+                          </td>
+                          <td className="text-right py-3 px-4">
+                            {formatCurrencyDetailed(insuranceMonthlyBreakdown)}
+                          </td>
+                          <td className="text-right py-3 px-4">
+                            {formatCurrencyDetailed(hoaMonthlyBreakdown)}
+                          </td>
+                          <td className="text-right py-3 px-4">
+                            {pmiMonthlyBreakdown > 0
+                              ? formatCurrencyDetailed(pmiMonthlyBreakdown)
+                              : '$0.00'}
+                          </td>
+                          <td className="text-right py-3 px-4 font-bold text-blue-700">
+                            {formatCurrencyDetailed(result50.pitiMonthly)}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* Equity Over Time Comparison */}
+                <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
+                  <h3 className="text-lg font-bold text-gray-900 mb-4">
+                    Equity Over Time: 30-Year vs 50-Year
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Based on your inputs above, this table shows how quickly you build equity in each loan term at
+                    different milestones.
+                  </p>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b-2 border-gray-200 bg-gray-50">
+                          <th className="text-left py-3 px-4 font-bold text-gray-900">Year</th>
+                          <th className="text-right py-3 px-4 font-bold text-blue-600">30-Year Equity</th>
+                          <th className="text-right py-3 px-4 font-bold text-purple-600">50-Year Equity</th>
+                          <th className="text-right py-3 px-4 font-bold text-orange-600">30-Year Advantage</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {generateTermComparisonData().map((row) => (
+                          <tr
+                            key={row.year}
+                            className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
+                          >
+                            <td className="py-3 px-4 text-gray-900 font-medium">{row.year}</td>
+                            <td className="text-right py-3 px-4 text-blue-700 font-semibold">
+                              {row.equity30Display}
+                            </td>
+                            <td className="text-right py-3 px-4 text-purple-700 font-semibold">
+                              {row.equity50Display}
+                            </td>
+                            <td className="text-right py-3 px-4 text-orange-600 font-bold">
+                              {row.advantageDisplay}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

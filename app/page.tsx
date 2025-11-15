@@ -5,6 +5,7 @@ import Footer from './components/Footer';
 import StructuredData from './components/StructuredData';
 import DismissibleNotice from './components/DismissibleNotice';
 import Link from 'next/link';
+import PolicyInsights from './components/PolicyInsights';
 
 export const metadata: Metadata = {
   alternates: {
@@ -15,6 +16,29 @@ export const metadata: Metadata = {
   },
 };
 
+const homepageFaqQuestions = [
+  {
+    question: "What is Trump's 50-year mortgage proposal?",
+    answer:
+      "It is a proposed 50-year fixed-rate mortgage program designed to make homeownership more affordable by stretching payments over 600 months instead of 360. Monthly payments drop, but total interest paid over the life of the loan increases dramatically compared to a traditional 30-year mortgage.",
+  },
+  {
+    question: 'How does a 50-year mortgage work?',
+    answer:
+      'It works like a standard fixed-rate mortgage, but with a 600-month repayment term. Each monthly payment includes principal and interest. Because the term is so long, early payments are mostly interest, so you build home equity very slowly compared with shorter terms.',
+  },
+  {
+    question: 'What are the main pros and cons?',
+    answer:
+      'The main benefit is a much lower monthly payment, which can help buyers qualify for a home or improve short-term cash flow. The trade-off is very high total interest, slower equity build-up, and the risk of still having a mortgage well into retirement.',
+  },
+  {
+    question: 'Are 50-year mortgages widely available today?',
+    answer:
+      'As of now, 50-year mortgages are not yet a mainstream product from major lenders. Rates, terms, and availability will depend on how the Trump proposal is implemented and how lenders choose to adopt it.',
+  },
+];
+
 export default function Home() {
   return (
     <>
@@ -22,10 +46,11 @@ export default function Home() {
       <StructuredData type="website" />
       <StructuredData type="calculator" />
       <StructuredData type="howto" />
+      <StructuredData type="faq" data={{ questions: homepageFaqQuestions }} />
       <Header />
       <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
         {/* Hero Section - Compact for first screen calculator visibility */}
-        <section className="bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 text-white py-8 md:py-10">
+        <section className="bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 text-white py-6 md:py-8">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-4xl mx-auto">
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3 leading-tight">
@@ -34,19 +59,25 @@ export default function Home() {
               <p className="text-lg md:text-xl text-blue-100 mb-4 leading-relaxed">
                 Calculate monthly payments and compare 50-year vs 30-year mortgages instantly.
               </p>
+              <p className="text-sm md:text-base text-blue-100/90">
+                Enter your numbers below to see side-by-side payments, total interest, and long-term trade-offs for Trump&apos;s proposed 50-year mortgage.
+              </p>
             </div>
           </div>
         </section>
 
         {/* Calculator Section */}
-        <section className="py-8 md:py-12">
+        <section id="calculator" className="py-8 md:py-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <MortgageCalculator />
           </div>
         </section>
 
+        {/* Policy & insights section */}
+        <PolicyInsights />
+
         {/* Trump Proposal Section */}
-        <section className="py-16 bg-gray-50">
+        <section id="how-it-works" className="py-16 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8 text-center">
@@ -280,8 +311,8 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Related Tools Section */}
-        <section className="py-16">
+        {/* Equity Comparison Section */}
+        <section id="comparison" className="py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-12 text-center">
               How Quickly Do You Build Equity? 30-Year vs 50-Year Comparison
@@ -351,6 +382,90 @@ export default function Home() {
                   <strong>Key Takeaway:</strong> After 30 years, the 30-year mortgage is paid off and you own the home free and clear. With the 50-year mortgage, you've only built $150,000 in equity and still owe 20 more years of payments. If you rely on home equity for retirement or refinancing, the slower accumulation could be a significant disadvantage.
                 </p>
               </div>
+            </div>
+
+            {/* Methodology & Disclaimer */}
+            <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-8 border border-gray-100 mb-12">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">How This 50-Year Mortgage Calculator Works</h3>
+              <p className="text-gray-700 mb-4">
+                This tool uses a standard fixed-rate mortgage amortization formula to calculate principal and interest payments for 30-year and 50-year terms. Property tax, homeowners insurance, HOA fees, and PMI are added as estimated monthly costs based on the percentages and dollar amounts you enter.
+              </p>
+              <p className="text-gray-700 mb-4">
+                PMI is only applied when your down payment is less than 20% of the home price. Closing costs are treated as a one-time upfront expense and are shown separately in the results instead of being rolled into the loan balance.
+              </p>
+              <p className="text-sm text-gray-600">
+                This calculator is for educational purposes only and does not constitute financial, tax, or legal advice. Actual rates, fees, and qualification requirements vary by lender and borrower profile. Always consult a licensed mortgage professional before making borrowing decisions.
+              </p>
+            </div>
+
+            {/* Inline FAQ Preview */}
+            <div id="faq" className="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+              <h3 className="text-2xl font-bold text-gray-900 mb-6">50-Year Mortgage FAQ (Quick Answers)</h3>
+              <div className="space-y-4">
+                <details className="group border border-gray-200 rounded-xl p-4">
+                  <summary className="flex items-center justify-between cursor-pointer">
+                    <span className="font-semibold text-gray-900">
+                      What is Trump&apos;s 50-year mortgage proposal?
+                    </span>
+                    <span className="text-gray-500 group-open:rotate-180 transition-transform">
+                      ▼
+                    </span>
+                  </summary>
+                  <p className="mt-3 text-sm text-gray-700">
+                    It is a proposed 50-year fixed-rate mortgage program designed to make homeownership more affordable by stretching payments over 600 months instead of 360. Monthly payments drop, but total interest paid over the life of the loan increases dramatically compared to a traditional 30-year mortgage.
+                  </p>
+                </details>
+
+                <details className="group border border-gray-200 rounded-xl p-4">
+                  <summary className="flex items-center justify-between cursor-pointer">
+                    <span className="font-semibold text-gray-900">
+                      How does a 50-year mortgage work?
+                    </span>
+                    <span className="text-gray-500 group-open:rotate-180 transition-transform">
+                      ▼
+                    </span>
+                  </summary>
+                  <p className="mt-3 text-sm text-gray-700">
+                    It works like a standard fixed-rate mortgage, but with a 600-month repayment term. Each monthly payment includes principal and interest. Because the term is so long, early payments are mostly interest, so you build home equity very slowly compared with shorter terms.
+                  </p>
+                </details>
+
+                <details className="group border border-gray-200 rounded-xl p-4">
+                  <summary className="flex items-center justify-between cursor-pointer">
+                    <span className="font-semibold text-gray-900">
+                      What are the main pros and cons?
+                    </span>
+                    <span className="text-gray-500 group-open:rotate-180 transition-transform">
+                      ▼
+                    </span>
+                  </summary>
+                  <p className="mt-3 text-sm text-gray-700">
+                    The main benefit is a much lower monthly payment, which can help buyers qualify for a home or improve short-term cash flow. The trade-off is very high total interest, slower equity build-up, and the risk of still having a mortgage well into retirement.
+                  </p>
+                </details>
+
+                <details className="group border border-gray-200 rounded-xl p-4">
+                  <summary className="flex items-center justify-between cursor-pointer">
+                    <span className="font-semibold text-gray-900">
+                      Are 50-year mortgages widely available today?
+                    </span>
+                    <span className="text-gray-500 group-open:rotate-180 transition-transform">
+                      ▼
+                    </span>
+                  </summary>
+                  <p className="mt-3 text-sm text-gray-700">
+                    As of now, 50-year mortgages are not yet a mainstream product from major lenders. Rates, terms, and availability will depend on how the Trump proposal is implemented and how lenders choose to adopt it.
+                  </p>
+                </details>
+              </div>
+
+              <p className="mt-6 text-sm text-gray-600 text-center">
+                Want deeper answers? Read the full{' '}
+                <Link href="/faq" className="text-blue-600 font-semibold hover:underline">
+                  50 Year Mortgage FAQ
+                </Link>
+                .
+              </p>
             </div>
           </div>
         </section>
