@@ -8,11 +8,17 @@ import Link from 'next/link';
 import PolicyInsights from './components/PolicyInsights';
 
 export const metadata: Metadata = {
+  title: 'Fixed-Rate 50-Year Mortgage Calculator & Amortization Schedule – Will You Ever Pay It Off?',
+  description:
+    'Free fixed-rate 50-year mortgage calculator for Trump’s proposed 50-year home loan. Calculate monthly payments, total interest, and a full 50-year amortization schedule with optional taxes, insurance, PMI, HOA, and closing costs.',
   alternates: {
     canonical: 'https://50yearmortgagecalculator.net/',
   },
   openGraph: {
     url: 'https://50yearmortgagecalculator.net/',
+    title: 'Fixed-Rate 50-Year Mortgage Calculator & Amortization Schedule',
+    description:
+      'Interactive 50-year mortgage calculator inspired by the viral Reddit debate. See your monthly payment, total interest, and full 50-year amortization schedule for Trump’s proposed 50-year mortgage.',
   },
 };
 
@@ -23,17 +29,17 @@ const homepageFaqQuestions = [
       "It is a proposed 50-year fixed-rate mortgage program designed to make homeownership more affordable by stretching payments over 600 months instead of 360. Monthly payments drop, but total interest paid over the life of the loan increases dramatically compared to a traditional 30-year mortgage.",
   },
   {
-    question: 'How does a 50-year mortgage work?',
+    question: 'How does a 50-year mortgage work compared with a 30-year loan?',
     answer:
       'It works like a standard fixed-rate mortgage, but with a 600-month repayment term. Each monthly payment includes principal and interest. Because the term is so long, early payments are mostly interest, so you build home equity very slowly compared with shorter terms.',
   },
   {
-    question: 'What are the main pros and cons?',
+    question: 'Is a 50-year mortgage a good idea for most buyers?',
     answer:
       'The main benefit is a much lower monthly payment, which can help buyers qualify for a home or improve short-term cash flow. The trade-off is very high total interest, slower equity build-up, and the risk of still having a mortgage well into retirement.',
   },
   {
-    question: 'Are 50-year mortgages widely available today?',
+    question: 'Are 50-year mortgages available yet, or just a proposal?',
     answer:
       'As of now, 50-year mortgages are not yet a mainstream product from major lenders. Rates, terms, and availability will depend on how the Trump proposal is implemented and how lenders choose to adopt it.',
   },
@@ -54,13 +60,13 @@ export default function Home() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-4xl mx-auto">
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3 leading-tight">
-                50 Year Mortgage Calculator
+                Fixed-Rate 50 Year Mortgage Calculator
               </h1>
               <p className="text-lg md:text-xl text-blue-100 mb-4 leading-relaxed">
-                Calculate monthly payments and compare 50-year vs 30-year mortgages instantly.
+                Will a 50-year mortgage save your budget or keep you in debt for life? See the real monthly payment and long-term cost.
               </p>
               <p className="text-sm md:text-base text-blue-100/90">
-                Enter your numbers below to see side-by-side payments, total interest, and long-term trade-offs for Trump&apos;s proposed 50-year mortgage.
+                Enter your numbers below to see your estimated monthly payment, total interest, and a full 50-year amortization schedule for Trump&apos;s proposed 50-year mortgage.
               </p>
             </div>
           </div>
@@ -70,6 +76,23 @@ export default function Home() {
         <section id="calculator" className="py-8 md:py-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <MortgageCalculator />
+            <p className="mt-3 text-xs text-gray-500 text-center md:text-left">
+              Estimates only: actual lender terms, PMI rules, taxes, insurance, and fees will vary. Always confirm details
+              with a licensed mortgage professional before making borrowing decisions.
+            </p>
+          </div>
+        </section>
+
+        {/* Reddit Discussion Highlight */}
+        <section className="bg-red-50 border-y border-red-100 py-3">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <p className="text-xs md:text-sm text-red-800 text-center font-medium">
+              From the r/REBubble debate:{' '}
+              <span className="font-bold">
+                “Will a 50-year mortgage mean I&apos;m paying this off until I die?”
+              </span>{' '}
+              Use this calculator to see what that actually looks like for your own loan.
+            </p>
           </div>
         </section>
 
@@ -311,84 +334,11 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Equity Comparison Section */}
-        <section id="comparison" className="py-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-12 text-center">
-              How Quickly Do You Build Equity? 30-Year vs 50-Year Comparison
-            </h2>
-
-            <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-8 border border-gray-100 mb-12">
-              <p className="text-gray-700 mb-6">
-                One of the biggest differences between 30-year and 50-year mortgages is how quickly you build equity in your home. With a 50-year loan, your monthly payment goes mostly toward interest early on, meaning you build equity much more slowly.
-              </p>
-              <p className="text-sm text-gray-600 mb-6">
-                Example: $300,000 home, $60,000 down payment, 6.5% interest rate
-              </p>
-
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b-2 border-gray-300 bg-gray-50">
-                      <th className="text-left py-4 px-4 font-bold text-gray-900">Year</th>
-                      <th className="text-right py-4 px-4 font-bold text-blue-600">30-Year Equity</th>
-                      <th className="text-right py-4 px-4 font-bold text-purple-600">50-Year Equity</th>
-                      <th className="text-right py-4 px-4 font-bold text-orange-600">Difference</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr className="border-b border-gray-200 hover:bg-gray-50">
-                      <td className="py-3 px-4 text-gray-700 font-medium">5</td>
-                      <td className="text-right py-3 px-4 text-gray-900 font-semibold">$31,500</td>
-                      <td className="text-right py-3 px-4 text-gray-900 font-semibold">$15,200</td>
-                      <td className="text-right py-3 px-4 text-orange-600 font-bold">-$16,300</td>
-                    </tr>
-                    <tr className="border-b border-gray-200 hover:bg-gray-50">
-                      <td className="py-3 px-4 text-gray-700 font-medium">10</td>
-                      <td className="text-right py-3 px-4 text-gray-900 font-semibold">$65,000</td>
-                      <td className="text-right py-3 px-4 text-gray-900 font-semibold">$38,000</td>
-                      <td className="text-right py-3 px-4 text-orange-600 font-bold">-$27,000</td>
-                    </tr>
-                    <tr className="border-b border-gray-200 hover:bg-gray-50">
-                      <td className="py-3 px-4 text-gray-700 font-medium">15</td>
-                      <td className="text-right py-3 px-4 text-gray-900 font-semibold">$102,000</td>
-                      <td className="text-right py-3 px-4 text-gray-900 font-semibold">$65,000</td>
-                      <td className="text-right py-3 px-4 text-orange-600 font-bold">-$37,000</td>
-                    </tr>
-                    <tr className="border-b border-gray-200 hover:bg-gray-50">
-                      <td className="py-3 px-4 text-gray-700 font-medium">20</td>
-                      <td className="text-right py-3 px-4 text-gray-900 font-semibold">$145,000</td>
-                      <td className="text-right py-3 px-4 text-gray-900 font-semibold">$95,000</td>
-                      <td className="text-right py-3 px-4 text-orange-600 font-bold">-$50,000</td>
-                    </tr>
-                    <tr className="border-b border-gray-200 hover:bg-gray-50">
-                      <td className="py-3 px-4 text-gray-700 font-medium">25</td>
-                      <td className="text-right py-3 px-4 text-gray-900 font-semibold">$180,000</td>
-                      <td className="text-right py-3 px-4 text-gray-900 font-semibold">$125,000</td>
-                      <td className="text-right py-3 px-4 text-orange-600 font-bold">-$55,000</td>
-                    </tr>
-                    <tr className="bg-blue-50">
-                      <td className="py-3 px-4 text-gray-700 font-bold">30</td>
-                      <td className="text-right py-3 px-4 text-blue-600 font-bold">$240,000</td>
-                      <td className="text-right py-3 px-4 text-gray-900 font-semibold">$150,000</td>
-                      <td className="text-right py-3 px-4 text-orange-600 font-bold">-$90,000</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <div className="mt-6 p-4 bg-blue-50 rounded-lg border-l-4 border-blue-500">
-                <p className="text-sm text-gray-700">
-                  <strong>Key Takeaway:</strong> After 30 years, the 30-year mortgage is paid off and you own the home free and clear. With the 50-year mortgage, you've only built $150,000 in equity and still owe 20 more years of payments. If you rely on home equity for retirement or refinancing, the slower accumulation could be a significant disadvantage.
-                </p>
-              </div>
-            </div>
-
-            {/* Methodology & Disclaimer */}
+        {/* Methodology & Disclaimer */}
             <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-8 border border-gray-100 mb-12">
               <h3 className="text-2xl font-bold text-gray-900 mb-4">How This 50-Year Mortgage Calculator Works</h3>
               <p className="text-gray-700 mb-4">
-                This tool uses a standard fixed-rate mortgage amortization formula to calculate principal and interest payments for 30-year and 50-year terms. Property tax, homeowners insurance, HOA fees, and PMI are added as estimated monthly costs based on the percentages and dollar amounts you enter.
+                This tool uses a standard fixed-rate mortgage amortization formula to calculate principal and interest payments for a 50-year term. Property tax, homeowners insurance, HOA fees, and PMI are added as estimated monthly costs based on the percentages and dollar amounts you enter.
               </p>
               <p className="text-gray-700 mb-4">
                 PMI is only applied when your down payment is less than 20% of the home price. Closing costs are treated as a one-time upfront expense and are shown separately in the results instead of being rolled into the loan balance.
@@ -467,8 +417,6 @@ export default function Home() {
                 .
               </p>
             </div>
-          </div>
-        </section>
 
         {/* Related Tools Section */}
         <section className="py-16">
@@ -730,14 +678,21 @@ export default function Home() {
               Ready to Explore Your Mortgage Options?
             </h2>
             <p className="text-xl text-blue-100 mb-8">
-              Use our free 50 year mortgage calculator to compare different loan terms and find the best mortgage solution for your homeownership goals.
+              Use our free 50 year mortgage calculator to understand your monthly payment, total interest, and long-term impact of Trump&apos;s proposed 50-year mortgage on your budget.
             </p>
             <Link
-              href="/comparison"
+              href="#calculator"
               className="inline-block bg-white text-blue-600 font-bold px-8 py-4 rounded-xl hover:bg-blue-50 transition-colors shadow-lg"
             >
-              Compare Mortgage Terms
+              Calculate Your 50-Year Mortgage
             </Link>
+            <p className="mt-4 text-sm text-blue-100">
+              Want to compare other terms like 15, 20, 30, or 40 years?{' '}
+              <Link href="/comparison" className="underline font-semibold">
+                Try the mortgage term comparison tool
+              </Link>
+              .
+            </p>
           </div>
         </section>
       </main>

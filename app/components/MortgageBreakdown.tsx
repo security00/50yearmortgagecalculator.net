@@ -6,7 +6,6 @@ interface MortgageBreakdownProps {
   homePrice: string;
   downPayment: string;
   interestRate: string;
-  result30: CalculationResult | null;
   result50: CalculationResult | null;
   taxMonthly: number;
   insuranceMonthlyBreakdown: number;
@@ -20,7 +19,6 @@ export function MortgageBreakdown({
   homePrice,
   downPayment,
   interestRate,
-  result30,
   result50,
   taxMonthly,
   insuranceMonthlyBreakdown,
@@ -29,11 +27,11 @@ export function MortgageBreakdown({
   formatCurrency,
   formatCurrencyDetailed,
 }: MortgageBreakdownProps) {
-  if (!result30 || !result50) {
+  if (!result50) {
     return null;
   }
 
-  const generateTermComparisonData = () => {
+  const generateEquityData = () => {
     const price = parseFloat(homePrice) || 0;
     const down = parseFloat(downPayment) || 0;
     const principal = price - down;
@@ -41,19 +39,17 @@ export function MortgageBreakdown({
     if (price <= 0 || principal <= 0 || rate <= 0) return [];
 
     const monthlyRate = rate / 100 / 12;
-    const years30 = 30;
-    const years50 = 50;
-    const monthly30 = result30.monthlyPayment;
-    const monthly50 = result50.monthlyPayment;
+    const termYears = 50;
+    const monthlyPayment = result50.monthlyPayment;
+    const totalMonths = termYears * 12;
 
     const targets = [5, 10, 15, 20, 25, 30, 40, 50];
 
-    const calcMetrics = (termYears: number, monthlyPayment: number, year: number) => {
-      const nTotal = termYears * 12;
-      const n = Math.min(year * 12, nTotal);
+    const calcBalance = (year: number) => {
+      const n = Math.min(year * 12, totalMonths);
 
       if (n === 0) {
-        return { balance: principal, principalPaid: 0, interestPaid: 0 };
+        return principal;
       }
 
       const pow = Math.pow(1 + monthlyRate, n);
@@ -63,29 +59,19 @@ export function MortgageBreakdown({
         balance = 0;
       }
 
-      const totalPaid = monthlyPayment * n;
-      const principalPaid = principal - balance;
-      const interestPaid = totalPaid - principalPaid;
-
-      return { balance, principalPaid, interestPaid };
+      return balance;
     };
 
     return targets.map((year) => {
-      const m30 = calcMetrics(years30, monthly30, year);
-      const m50 = calcMetrics(years50, monthly50, year);
-
-      const equity30 = price - m30.balance;
-      const equity50 = price - m50.balance;
-      const equityAdvantage = equity30 - equity50;
+      const balance = calcBalance(year);
+      const equity = price - balance;
 
       return {
         year,
-        equity30,
-        equity50,
-        equityAdvantage,
-        equity30Display: formatCurrency(equity30),
-        equity50Display: formatCurrency(equity50),
-        advantageDisplay: formatCurrency(equityAdvantage),
+        equity,
+        balance,
+        equityDisplay: formatCurrency(equity),
+        balanceDisplay: formatCurrency(balance),
       };
     });
   };
@@ -114,29 +100,6 @@ export function MortgageBreakdown({
                 </tr>
               </thead>
               <tbody>
-                <tr className="border-b border-gray-100 hover:bg-gray-50">
-                  <td className="py-3 px-4 font-semibold text-gray-900">30-Year</td>
-                  <td className="text-right py-3 px-4">
-                    {formatCurrencyDetailed(result30.monthlyPayment)}
-                  </td>
-                  <td className="text-right py-3 px-4">
-                    {formatCurrencyDetailed(taxMonthly)}
-                  </td>
-                  <td className="text-right py-3 px-4">
-                    {formatCurrencyDetailed(insuranceMonthlyBreakdown)}
-                  </td>
-                  <td className="text-right py-3 px-4">
-                    {formatCurrencyDetailed(hoaMonthlyBreakdown)}
-                  </td>
-                  <td className="text-right py-3 px-4">
-                    {pmiMonthlyBreakdown > 0
-                      ? formatCurrencyDetailed(pmiMonthlyBreakdown)
-                      : '$0.00'}
-                  </td>
-                  <td className="text-right py-3 px-4 font-bold text-blue-700">
-                    {formatCurrencyDetailed(result30.pitiMonthly)}
-                  </td>
-                </tr>
                 <tr className="hover:bg-gray-50">
                   <td className="py-3 px-4 font-semibold text-gray-900">50-Year</td>
                   <td className="text-right py-3 px-4">
@@ -167,9 +130,9 @@ export function MortgageBreakdown({
       </div>
 
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Equity Growth at Key Milestones</h2>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">Equity Growth with a 50-Year Mortgage</h2>
         <p className="text-sm text-gray-600 mb-4">
-          Compare how quickly you build home equity with a 30-year versus 50-year mortgage at important checkpoints.
+          See how your home equity grows over time with a 50-year fixed-rate mortgage at important checkpoints.
         </p>
 
         <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
@@ -178,26 +141,22 @@ export function MortgageBreakdown({
               <thead>
                 <tr className="border-b-2 border-gray-200 bg-gray-50">
                   <th className="text-left py-3 px-4 font-bold text-gray-900">Year</th>
-                  <th className="text-right py-3 px-4 font-bold text-blue-600">30-Year Equity</th>
-                  <th className="text-right py-3 px-4 font-bold text-purple-600">50-Year Equity</th>
-                  <th className="text-right py-3 px-4 font-bold text-orange-600">30-Year Advantage</th>
+                  <th className="text-right py-3 px-4 font-bold text-purple-600">Equity (50-Year)</th>
+                  <th className="text-right py-3 px-4 font-bold text-blue-700">Remaining Balance</th>
                 </tr>
               </thead>
               <tbody>
-                {generateTermComparisonData().map((row) => (
+                {generateEquityData().map((row) => (
                   <tr
                     key={row.year}
                     className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
                   >
                     <td className="py-3 px-4 text-gray-900 font-medium">{row.year}</td>
-                    <td className="text-right py-3 px-4 text-blue-700 font-semibold">
-                      {row.equity30Display}
-                    </td>
                     <td className="text-right py-3 px-4 text-purple-700 font-semibold">
-                      {row.equity50Display}
+                      {row.equityDisplay}
                     </td>
-                    <td className="text-right py-3 px-4 text-orange-600 font-bold">
-                      {row.advantageDisplay}
+                    <td className="text-right py-3 px-4 text-blue-700 font-bold">
+                      {row.balanceDisplay}
                     </td>
                   </tr>
                 ))}
@@ -209,4 +168,3 @@ export function MortgageBreakdown({
     </section>
   );
 }
-

@@ -119,24 +119,14 @@ export function MortgageInputs({
           </div>
         </div>
 
-        {/* Loan Term - Informational only now */}
+        {/* Loan Term - Informational only */}
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">Comparison</label>
-          <div className="flex gap-3">
-            <div className="flex-1 py-3 px-4 rounded-xl font-semibold bg-blue-100 text-blue-800 text-center">
-              30 Years
-            </div>
-            <div className="flex items-center justify-center text-gray-600">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
-              </svg>
-            </div>
-            <div className="flex-1 py-3 px-4 rounded-xl font-semibold bg-purple-100 text-purple-800 text-center">
-              50 Years
-            </div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">Loan Term</label>
+          <div className="py-3 px-4 rounded-xl font-semibold bg-purple-100 text-purple-800 text-center">
+            50-Year Fixed Mortgage (600 months)
           </div>
           <p className="text-xs text-gray-600 mt-2">
-            This calculator always shows both terms for comparison
+            This calculator assumes a 50-year fixed-rate mortgage term.
           </p>
         </div>
       </div>
@@ -248,4 +238,3 @@ export function MortgageInputs({
     </div>
   );
 }
-

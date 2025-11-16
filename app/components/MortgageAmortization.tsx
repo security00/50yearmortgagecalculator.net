@@ -36,7 +36,9 @@ export function MortgageAmortization({
 
   const generateYearSummary = () => {
     const summary = [];
-    for (let year = 1; year <= 30; year++) {
+    const totalYears =
+      amortization.length > 0 ? Math.ceil(amortization[amortization.length - 1].month / 12) : 0;
+    for (let year = 1; year <= totalYears; year++) {
       const monthStart = (year - 1) * 12 + 1;
       const monthEnd = year * 12;
       const yearData = amortization.slice(monthStart - 1, monthEnd);
@@ -114,7 +116,7 @@ export function MortgageAmortization({
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = `amortization_30yr_${homePrice}.csv`;
+    a.download = `amortization_50yr_${homePrice}.csv`;
     a.click();
     URL.revokeObjectURL(a.href);
   };
@@ -126,7 +128,7 @@ export function MortgageAmortization({
       <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-1">Amortization Schedule (30-Year)</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-1">Amortization Schedule (50-Year)</h2>
               <p className="text-sm text-gray-600">Visual breakdown of your mortgage payments over time</p>
             </div>
             <div className="flex gap-3">

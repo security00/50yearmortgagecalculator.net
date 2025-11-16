@@ -1,12 +1,15 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 
 export default function PolicyInsights() {
+  const [expanded, setExpanded] = useState(false);
+
   return (
     <section className="py-12 md:py-16 bg-gray-50" id="policy-insights">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center mb-10">
+        <div className="max-w-4xl mx-auto text-center mb-6">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
             50-Year Mortgage Policy &amp; Market Insights
           </h2>
@@ -16,9 +19,31 @@ export default function PolicyInsights() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-          {/* Policy + news side */}
-          <div className="space-y-6">
+        {/* Quick takeaways */}
+        <div className="max-w-3xl mx-auto mb-4">
+          <ul className="text-xs md:text-sm text-gray-700 space-y-1 md:space-y-0 md:flex md:justify-center md:gap-6">
+            <li>• 50-year mortgages are not yet mainstream or available everywhere.</li>
+            <li>• Lower payments come with much higher total interest and slower equity.</li>
+            <li>• Many borrowers worry about carrying debt into retirement.</li>
+          </ul>
+        </div>
+
+        {!expanded && (
+          <div className="text-center mb-6">
+            <button
+              type="button"
+              onClick={() => setExpanded(true)}
+              className="inline-flex items-center px-4 py-2 rounded-full border border-gray-300 bg-white text-xs md:text-sm font-semibold text-gray-800 hover:bg-gray-50 transition-colors"
+            >
+              Show detailed policy &amp; expert analysis
+            </button>
+          </div>
+        )}
+
+        {expanded && (
+          <div className="space-y-8">
+            {/* Policy + news */}
+            <div className="space-y-6">
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-3">Policy &amp; Regulatory Context</h3>
               <ul className="space-y-3 text-sm text-gray-700">
@@ -66,6 +91,28 @@ export default function PolicyInsights() {
                     <p className="text-gray-600 text-xs leading-relaxed mt-1">
                       Useful when you want to frame 50-year mortgages in terms of generational wealth and long-term
                       planning rather than just the monthly payment.
+                    </p>
+                  </div>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="mt-1 h-1.5 w-1.5 rounded-full bg-red-500" />
+                  <div>
+                    <Link
+                      href="https://www.reddit.com/r/REBubble/comments/1ovmcl1/50year_mortgage_calculator_will_you_die_before/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-semibold text-gray-900 hover:text-red-700 underline underline-offset-2"
+                    >
+                      r/REBubble – 50-year mortgage debate
+                    </Link>
+                    <p className="text-gray-600 text-xs leading-relaxed">
+                      Community discussion about fears that 50-year mortgages could keep borrowers paying well into old
+                      age, skepticism about whether the math ever makes sense, and concerns that ultra-long terms
+                      mostly benefit lenders rather than homeowners.
+                    </p>
+                    <p className="text-gray-600 text-xs leading-relaxed mt-1">
+                      Useful if you want to understand the emotional side of this policy and see how real borrowers and
+                      observers react to the idea, beyond official news coverage and expert analysis.
                     </p>
                   </div>
                 </li>
@@ -139,77 +186,90 @@ export default function PolicyInsights() {
                 changes. Always cross-check with official sources.
               </p>
             </div>
-          </div>
-
-          {/* Video side */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 md:p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">
-              Videos: 50-Year Mortgage Policy &amp; Analysis
-            </h3>
-            <p className="text-sm text-gray-600 mb-4">
-              Explore multiple expert perspectives on 30-year vs 50-year mortgages, long-term affordability, and policy
-              implications.
-            </p>
-
-            <div className="space-y-4">
-              <div className="aspect-video w-full rounded-xl overflow-hidden bg-black/5">
-                <iframe
-                  className="w-full h-full border-0"
-                  src="https://www.youtube.com/embed/Q8FcRbLCwEk"
-                  loading="lazy"
-                  title="50-Year Mortgage Video 1"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                />
-              </div>
-              <div className="aspect-video w-full rounded-xl overflow-hidden bg-black/5">
-                <iframe
-                  className="w-full h-full border-0"
-                  src="https://www.youtube.com/embed/P3wBOTWO0KU"
-                  loading="lazy"
-                  title="50-Year Mortgage Video 2"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                />
-              </div>
-              <div className="aspect-video w-full rounded-xl overflow-hidden bg-black/5">
-                <iframe
-                  className="w-full h-full border-0"
-                  src="https://www.youtube.com/embed/oeLjzyXRlDQ"
-                  loading="lazy"
-                  title="50-Year Mortgage Video 3"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                />
-              </div>
-              <div className="aspect-video w-full rounded-xl overflow-hidden bg-black/5">
-                <iframe
-                  className="w-full h-full border-0"
-                  src="https://www.youtube.com/embed/WWmI9KDSl8k"
-                  loading="lazy"
-                  title="50-Year Mortgage Video 4"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                />
-              </div>
-              <div className="aspect-video w-full rounded-xl overflow-hidden bg-black/5">
-                <iframe
-                  className="w-full h-full border-0"
-                  src="https://www.youtube.com/embed/V7KRGN38Z6k"
-                  loading="lazy"
-                  title="50-Year Mortgage Video 5"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                />
-              </div>
             </div>
 
-            <p className="mt-3 text-xs text-gray-500">
-              These videos are embedded from YouTube using the IDs you provided. Be sure to periodically review that
-              they still reflect up-to-date rules and guidance in your market.
-            </p>
+            {/* Video section */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 md:p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                Videos: 50-Year Mortgage Policy &amp; Analysis
+              </h3>
+              <p className="text-sm text-gray-600 mb-4">
+                Explore multiple expert perspectives on 30-year vs 50-year mortgages, long-term affordability, and policy
+                implications.
+              </p>
+
+              <div className="space-y-4">
+                <div className="aspect-video w-full rounded-xl overflow-hidden bg-black/5">
+                  <iframe
+                    className="w-full h-full border-0"
+                    src="https://www.youtube.com/embed/Q8FcRbLCwEk"
+                    loading="lazy"
+                    title="50-Year Mortgage Video 1"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                  />
+                </div>
+                <div className="aspect-video w-full rounded-xl overflow-hidden bg-black/5">
+                  <iframe
+                    className="w-full h-full border-0"
+                    src="https://www.youtube.com/embed/P3wBOTWO0KU"
+                    loading="lazy"
+                    title="50-Year Mortgage Video 2"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                  />
+                </div>
+                <div className="aspect-video w-full rounded-xl overflow-hidden bg-black/5">
+                  <iframe
+                    className="w-full h-full border-0"
+                    src="https://www.youtube.com/embed/oeLjzyXRlDQ"
+                    loading="lazy"
+                    title="50-Year Mortgage Video 3"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                  />
+                </div>
+                <div className="aspect-video w-full rounded-xl overflow-hidden bg-black/5">
+                  <iframe
+                    className="w-full h-full border-0"
+                    src="https://www.youtube.com/embed/WWmI9KDSl8k"
+                    loading="lazy"
+                    title="50-Year Mortgage Video 4"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                  />
+                </div>
+                <div className="aspect-video w-full rounded-xl overflow-hidden bg-black/5">
+                  <iframe
+                    className="w-full h-full border-0"
+                    src="https://www.youtube.com/embed/V7KRGN38Z6k"
+                    loading="lazy"
+                    title="50-Year Mortgage Video 5"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                  />
+                </div>
+              </div>
+
+              <p className="mt-3 text-xs text-gray-500">
+                These videos are embedded from YouTube using the IDs you provided. Be sure to periodically review that
+                they still reflect up-to-date rules and guidance in your market.
+              </p>
+            </div>
           </div>
-        </div>
+        )}
+
+        {expanded && (
+          <div className="mt-6 text-center">
+            <button
+              type="button"
+              onClick={() => setExpanded(false)}
+              className="inline-flex items-center px-4 py-2 rounded-full border border-gray-300 bg-white text-xs md:text-sm font-semibold text-gray-800 hover:bg-gray-50 transition-colors"
+            >
+              Hide detailed policy &amp; analysis
+            </button>
+          </div>
+        )}
 
         <div className="mt-6 text-center">
           <Link

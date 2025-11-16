@@ -5,15 +5,17 @@ import ComparisonTool from '../components/ComparisonTool';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: "Mortgage Term Comparison - 30 vs 50 Year Mortgage",
-  description: "Compare 15, 20, 30, 40, and 50 year mortgage terms side-by-side. See how different loan terms affect your monthly payment, total interest, and overall costs with our free comparison tool.",
+  title: 'Mortgage Term Comparison: 15 vs 20 vs 30 vs 40 vs 50 Years',
+  description:
+    'Compare 15, 20, 30, 40, and 50 year mortgage terms side-by-side. See how much interest you save with shorter terms and how much extra you pay for a 50-year mortgage.',
   alternates: {
     canonical: 'https://50yearmortgagecalculator.net/comparison',
   },
   openGraph: {
     url: 'https://50yearmortgagecalculator.net/comparison',
-    title: "Mortgage Term Comparison - 30 vs 50 Year Mortgage",
-    description: "Compare 15, 20, 30, 40, and 50 year mortgage terms side-by-side. See how different loan terms affect your monthly payment, total interest, and overall costs.",
+    title: 'Mortgage Term Comparison: 15 vs 20 vs 30 vs 40 vs 50 Years',
+    description:
+      'Interactive mortgage term comparison tool. Visualize monthly payments, total interest, and long-term costs across 15, 20, 30, 40, and 50-year mortgages.',
   },
 };
 

@@ -126,7 +126,7 @@ export default function DismissibleNotice() {
               {/* Content */}
               <div className="p-6 space-y-4">
                 <p className="text-gray-700 leading-relaxed">
-                  <strong>50-year mortgages are currently NOT available</strong> in the U.S. market. This calculator and website are dedicated to understanding the Trump administration's proposal for an extended mortgage term.
+                  <strong>50-year mortgages are currently NOT available</strong> in the U.S. market. This calculator and website are dedicated to understanding the Trump administration's proposal for an extended-term mortgage and what it would mean for borrowers.
                 </p>
 
                 <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
@@ -140,15 +140,18 @@ export default function DismissibleNotice() {
                 </p>
 
                 <ul className="list-disc ml-5 space-y-2 text-gray-700">
-                  <li>Monthly payment comparisons (30-year vs 50-year)</li>
-                  <li>Total interest paid over the life of the loan</li>
-                  <li>Complete amortization schedules</li>
-                  <li>Real-world comparison with actual 30-year mortgage options available today</li>
+                  <li>Estimated monthly payment for a 50-year fixed-rate mortgage</li>
+                  <li>Total interest paid over the life of a 50-year loan</li>
+                  <li>Complete amortization schedules for a 50-year term</li>
+                  <li>Context against typical 30-year mortgage options discussed in our comparison and insights sections</li>
                 </ul>
 
                 <div className="bg-orange-50 border-l-4 border-orange-500 p-4 rounded">
                   <p className="text-sm text-orange-900">
-                    <strong>Why This Matters:</strong> As housing affordability becomes increasingly challenging, understanding different mortgage options helps you make informed financial decisions. This calculator allows you to evaluate what a 50-year mortgage would mean for your specific situation.
+                    <strong>Why This Matters:</strong> As housing affordability becomes increasingly challenging, many
+                    people worry about taking on debt that could follow them well into retirement or feel like they are
+                    “paying the bank forever.” This calculator allows you to evaluate what a 50-year mortgage would mean
+                    for your specific situation before such products ever reach the market.
                   </p>
                 </div>
 

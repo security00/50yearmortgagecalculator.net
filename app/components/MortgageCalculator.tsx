@@ -51,14 +51,12 @@ export default function MortgageCalculator() {
   const [homePrice, setHomePrice] = useState<string>('300000');
   const [downPayment, setDownPayment] = useState<string>('60000');
   const [interestRate, setInterestRate] = useState<string>('6.5');
-  const [result30, setResult30] = useState<CalculationResult | null>(null);
   const [result50, setResult50] = useState<CalculationResult | null>(null);
   const [propertyTaxRate, setPropertyTaxRate] = useState<string>('1.2'); // %/yr
   const [homeInsuranceAnnual, setHomeInsuranceAnnual] = useState<string>('1200'); // $/yr
   const [hoaMonthly, setHoaMonthly] = useState<string>('0'); // $/mo
   const [pmiRate, setPmiRate] = useState<string>('0.5'); // %/yr, applied when LTV > 80%
   const [closingCosts, setClosingCosts] = useState<string>('0'); // $ one-time
-  const [result, setResult] = useState<CalculationResult | null>(null);
   const [amortization, setAmortization] = useState<AmortizationRow[]>([]);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const pathname = usePathname();
@@ -111,85 +109,52 @@ export default function MortgageCalculator() {
       pmiMonthly = annualPmi / 12;
     }
 
-    // Calculate for 30 years
-    {
-      const years = 30;
-      const numberOfPayments = years * 12;
+    // Calculate for 50 years (primary focus of this calculator)
+    const years = 50;
+    const numberOfPayments = years * 12;
 
-      const monthlyPayment =
-        (principal * monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) /
-        (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
+    const monthlyPayment =
+      (principal * monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) /
+      (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
 
-      const totalPayment = monthlyPayment * numberOfPayments;
-      const totalInterest = totalPayment - principal;
+    const totalPayment = monthlyPayment * numberOfPayments;
+    const totalInterest = totalPayment - principal;
 
-      const taxMonthly = ((parseFloat(propertyTaxRate) || 0) / 100) * price / 12;
-      const insuranceMonthly = (parseFloat(homeInsuranceAnnual) || 0) / 12;
-      const hoa = parseFloat(hoaMonthly) || 0;
-      const pitiMonthly = monthlyPayment + taxMonthly + insuranceMonthly + hoa + pmiMonthly;
+    const taxMonthly = ((parseFloat(propertyTaxRate) || 0) / 100) * price / 12;
+    const insuranceMonthly = (parseFloat(homeInsuranceAnnual) || 0) / 12;
+    const hoa = parseFloat(hoaMonthly) || 0;
+    const pitiMonthly = monthlyPayment + taxMonthly + insuranceMonthly + hoa + pmiMonthly;
 
-      setResult30({
-        monthlyPayment,
-        totalPayment,
-        totalInterest,
-        principalAmount: principal,
-        pitiMonthly,
-        pmiMonthly,
-        closingCosts: closingCostsValue,
-        totalCostWithClosing: totalPayment + closingCostsValue,
-      });
+    setResult50({
+      monthlyPayment,
+      totalPayment,
+      totalInterest,
+      principalAmount: principal,
+      pitiMonthly,
+      pmiMonthly,
+      closingCosts: closingCostsValue,
+      totalCostWithClosing: totalPayment + closingCostsValue,
+    });
 
-      // Generate amortization schedule
-      const schedule: AmortizationRow[] = [];
-      let balance = principal;
+    // Generate amortization schedule for the 50-year term
+    const schedule: AmortizationRow[] = [];
+    let balance = principal;
 
-      for (let month = 1; month <= numberOfPayments; month++) {
-        const interestPayment = balance * monthlyRate;
-        const principalPayment = monthlyPayment - interestPayment;
-        balance -= principalPayment;
+    for (let month = 1; month <= numberOfPayments; month++) {
+      const interestPayment = balance * monthlyRate;
+      const principalPayment = monthlyPayment - interestPayment;
+      balance -= principalPayment;
 
-        schedule.push({
-          month,
-          payment: monthlyPayment,
-          principal: principalPayment,
-          interest: interestPayment,
-          balance: Math.max(0, balance),
-        });
-      }
-
-      setAmortization(schedule);
-    }
-
-    // Calculate for 50 years
-    {
-      const years = 50;
-      const numberOfPayments = years * 12;
-
-      const monthlyPayment =
-        (principal * monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) /
-        (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
-
-      const totalPayment = monthlyPayment * numberOfPayments;
-      const totalInterest = totalPayment - principal;
-
-      const taxMonthly = ((parseFloat(propertyTaxRate) || 0) / 100) * price / 12;
-      const insuranceMonthly = (parseFloat(homeInsuranceAnnual) || 0) / 12;
-      const hoa = parseFloat(hoaMonthly) || 0;
-      const pitiMonthly = monthlyPayment + taxMonthly + insuranceMonthly + hoa + pmiMonthly;
-
-      setResult50({
-        monthlyPayment,
-        totalPayment,
-        totalInterest,
-        principalAmount: principal,
-        pitiMonthly,
-        pmiMonthly,
-        closingCosts: closingCostsValue,
-        totalCostWithClosing: totalPayment + closingCostsValue,
+      schedule.push({
+        month,
+        payment: monthlyPayment,
+        principal: principalPayment,
+        interest: interestPayment,
+        balance: Math.max(0, balance),
       });
     }
 
-    setResult(null); // Keep for backward compatibility
+    setAmortization(schedule);
   };
 
   useEffect(() => {
@@ -220,61 +185,57 @@ export default function MortgageCalculator() {
   const taxMonthly = ((parseFloat(propertyTaxRate) || 0) / 100) * priceForBreakdown / 12;
   const insuranceMonthlyBreakdown = (parseFloat(homeInsuranceAnnual) || 0) / 12;
   const hoaMonthlyBreakdown = parseFloat(hoaMonthly) || 0;
-  const pmiMonthlyBreakdown = result30?.pmiMonthly ?? 0;
+  const pmiMonthlyBreakdown = result50?.pmiMonthly ?? 0;
 
   return (
-    <div className="w-full max-w-7xl mx-auto">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Input Section */}
-        <MortgageInputs
-          homePrice={homePrice}
-          downPayment={downPayment}
-          interestRate={interestRate}
-          propertyTaxRate={propertyTaxRate}
-          homeInsuranceAnnual={homeInsuranceAnnual}
-          hoaMonthly={hoaMonthly}
-          pmiRate={pmiRate}
-          closingCosts={closingCosts}
-          downPaymentPercent={downPaymentPercent}
-          showAdvanced={showAdvanced}
-          presetScenarios={presetScenarios}
-          onHomePriceChange={setHomePrice}
-          onDownPaymentChange={setDownPayment}
-          onInterestRateChange={setInterestRate}
-          onPropertyTaxRateChange={setPropertyTaxRate}
-          onHomeInsuranceAnnualChange={setHomeInsuranceAnnual}
-          onHoaMonthlyChange={setHoaMonthly}
-          onPmiRateChange={setPmiRate}
-          onClosingCostsChange={setClosingCosts}
-          onToggleAdvanced={() => setShowAdvanced((prev) => !prev)}
-          onApplyPreset={(scenario) => {
-            setHomePrice(scenario.homePrice);
-            setDownPayment(scenario.downPayment);
-            setInterestRate(scenario.interestRate);
-            setPropertyTaxRate(scenario.propertyTaxRate);
-            setHomeInsuranceAnnual(scenario.homeInsuranceAnnual);
-            setHoaMonthly(scenario.hoaMonthly);
-            setPmiRate(scenario.pmiRate);
-            setClosingCosts(scenario.closingCosts);
-            setShowAdvanced(true);
-          }}
-        />
+    <div className="w-full max-w-5xl md:max-w-6xl lg:max-w-7xl mx-auto space-y-8">
+      {/* Input Section */}
+      <MortgageInputs
+        homePrice={homePrice}
+        downPayment={downPayment}
+        interestRate={interestRate}
+        propertyTaxRate={propertyTaxRate}
+        homeInsuranceAnnual={homeInsuranceAnnual}
+        hoaMonthly={hoaMonthly}
+        pmiRate={pmiRate}
+        closingCosts={closingCosts}
+        downPaymentPercent={downPaymentPercent}
+        showAdvanced={showAdvanced}
+        presetScenarios={presetScenarios}
+        onHomePriceChange={setHomePrice}
+        onDownPaymentChange={setDownPayment}
+        onInterestRateChange={setInterestRate}
+        onPropertyTaxRateChange={setPropertyTaxRate}
+        onHomeInsuranceAnnualChange={setHomeInsuranceAnnual}
+        onHoaMonthlyChange={setHoaMonthly}
+        onPmiRateChange={setPmiRate}
+        onClosingCostsChange={setClosingCosts}
+        onToggleAdvanced={() => setShowAdvanced((prev) => !prev)}
+        onApplyPreset={(scenario) => {
+          setHomePrice(scenario.homePrice);
+          setDownPayment(scenario.downPayment);
+          setInterestRate(scenario.interestRate);
+          setPropertyTaxRate(scenario.propertyTaxRate);
+          setHomeInsuranceAnnual(scenario.homeInsuranceAnnual);
+          setHoaMonthly(scenario.hoaMonthly);
+          setPmiRate(scenario.pmiRate);
+          setClosingCosts(scenario.closingCosts);
+          setShowAdvanced(true);
+        }}
+      />
 
-        {/* Results Section */}
-        <MortgageResults
-          result30={result30}
-          result50={result50}
-          formatCurrency={formatCurrency}
-          formatCurrencyDetailed={formatCurrencyDetailed}
-        />
-      </div>
+      {/* Results Section */}
+      <MortgageResults
+        result50={result50}
+        formatCurrency={formatCurrency}
+        formatCurrencyDetailed={formatCurrencyDetailed}
+      />
 
       {/* Detailed payment & equity breakdown */}
       <MortgageBreakdown
         homePrice={homePrice}
         downPayment={downPayment}
         interestRate={interestRate}
-        result30={result30}
         result50={result50}
         taxMonthly={taxMonthly}
         insuranceMonthlyBreakdown={insuranceMonthlyBreakdown}
